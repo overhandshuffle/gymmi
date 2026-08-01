@@ -362,6 +362,13 @@ function renderInfo() {
           </button>
           <div class="update-status" id="update-status" role="status" aria-live="polite">${escapeHtml(updateStatus)}</div>
         </div>
+        <div class="panel data-panel">
+          <h2>Datenverwaltung</h2>
+          <p class="muted">Sichert Übungen, laufendes Workout und Trainingsverlauf in einer JSON-Datei.</p>
+          <button class="win-button win-button--wide" type="button" data-action="export-json">
+            JSON-Backup exportieren
+          </button>
+        </div>
         <div class="panel">
           <strong>DATENSCHUTZ</strong>
           <ul class="privacy-list">
@@ -377,6 +384,47 @@ function renderInfo() {
 
 function refreshInfoView() {
   if (currentView === "info") renderInfo();
+}
+
+async function exportJsonBackup() {
+  const date = new Date().toISOString().slice(0, 10);
+  const filename = `gymmi-backup-${date}.json`;
+  const backup = {
+    format: "gymmi-backup",
+    schemaVersion: 1,
+    appVersion,
+    exportedAt: new Date().toISOString(),
+    data: state,
+  };
+  const file = new File(
+    [JSON.stringify(backup, null, 2)],
+    filename,
+    { type: "application/json" },
+  );
+
+  try {
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "GYMMI Backup",
+        text: "Backup meiner GYMMI-Trainingsdaten",
+      });
+      showToast("Backup zum Teilen bereit");
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast("JSON-Backup heruntergeladen");
+  } catch (error) {
+    if (error.name !== "AbortError") showToast("Export fehlgeschlagen");
+  }
 }
 
 async function loadInstalledVersion() {
@@ -694,6 +742,7 @@ app.addEventListener("click", (event) => {
   }
   if (action === "delete-library-exercise") deleteLibraryExercise(button.dataset.libraryId);
   if (action === "check-update") checkForUpdates();
+  if (action === "export-json") exportJsonBackup();
 });
 
 app.addEventListener("change", (event) => {

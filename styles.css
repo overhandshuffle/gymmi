@@ -716,12 +716,14 @@ summary:focus-visible {
   gap: 10px;
 }
 
-.update-panel h2 {
+.update-panel h2,
+.data-panel h2 {
   margin: 0 0 5px;
   font-size: 15px;
 }
 
-.update-panel p {
+.update-panel p,
+.data-panel p {
   margin: 0 0 12px;
   line-height: 1.4;
 }
