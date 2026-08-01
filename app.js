@@ -41,6 +41,9 @@ let currentView = "workout";
 let pickerGroup = "Alle";
 let addNewExerciseToWorkout = false;
 let toastTimer;
+let appVersion = "…";
+let pendingVersion = null;
+let updateStatus = "";
 
 const app = document.querySelector("#app");
 const picker = document.querySelector("#exercise-picker");
@@ -122,6 +125,7 @@ function render() {
   if (currentView === "workout") renderWorkout();
   if (currentView === "exercises") renderExercises();
   if (currentView === "history") renderHistory();
+  if (currentView === "info") renderInfo();
 }
 
 function renderWorkout() {
@@ -332,6 +336,150 @@ function historyItem(workout) {
       <div class="history-details">${exerciseDetails || "Keine Übungen gespeichert."}</div>
     </details>
   `;
+}
+
+function renderInfo() {
+  app.innerHTML = `
+    <section>
+      <div class="view-header">
+        <div>
+          <p class="eyebrow">SYSTEMSTEUERUNG</p>
+          <h1 class="view-title">Info</h1>
+        </div>
+      </div>
+      <div class="info-grid">
+        <div class="panel about-panel">
+          <div class="about-logo" aria-hidden="true">G</div>
+          <h2>GYMMI.EXE</h2>
+          <span class="version-number">VERSION ${escapeHtml(appVersion)}</span>
+          <p class="muted">Minimaler Workout-Tracker<br />für maximale Gains.</p>
+        </div>
+        <div class="panel update-panel">
+          <h2>Software-Update</h2>
+          <p class="muted">Prüft nur auf deinen ausdrücklichen Wunsch, ob auf GitHub Pages eine neuere Version liegt.</p>
+          <button class="win-button win-button--wide win-button--primary" type="button" data-action="check-update">
+            Auf Updates prüfen
+          </button>
+          <div class="update-status" id="update-status" role="status" aria-live="polite">${escapeHtml(updateStatus)}</div>
+        </div>
+        <div class="panel">
+          <strong>DATENSCHUTZ</strong>
+          <ul class="privacy-list">
+            <li>Workouts bleiben auf diesem Gerät.</li>
+            <li>Keine Anmeldung und kein Tracking.</li>
+            <li>Die Updateprüfung lädt nur die Versionsnummer.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function refreshInfoView() {
+  if (currentView === "info") renderInfo();
+}
+
+async function loadInstalledVersion() {
+  try {
+    const response = await fetch("version.json");
+    if (!response.ok) throw new Error("Versionsdatei fehlt");
+    const data = await response.json();
+    appVersion = String(data.version || "unbekannt");
+  } catch {
+    appVersion = "unbekannt";
+  }
+}
+
+function compareVersions(first, second) {
+  const left = String(first).split(".").map((part) => Number.parseInt(part, 10) || 0);
+  const right = String(second).split(".").map((part) => Number.parseInt(part, 10) || 0);
+  const length = Math.max(left.length, right.length);
+  for (let index = 0; index < length; index += 1) {
+    if ((left[index] || 0) > (right[index] || 0)) return 1;
+    if ((left[index] || 0) < (right[index] || 0)) return -1;
+  }
+  return 0;
+}
+
+async function checkForUpdates() {
+  updateStatus = "Suche nach Updates…";
+  refreshInfoView();
+  const button = app.querySelector('[data-action="check-update"]');
+  button.disabled = true;
+
+  try {
+    const response = await fetch(`version.json?check=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error("Versionsserver nicht erreichbar");
+    const data = await response.json();
+    const remoteVersion = String(data.version || "");
+    if (!/^\d+\.\d+\.\d+$/.test(remoteVersion)) throw new Error("Ungültige Versionsnummer");
+
+    const comparison = compareVersions(remoteVersion, appVersion);
+    if (comparison === 0) {
+      updateStatus = `Version ${appVersion} ist aktuell.`;
+      refreshInfoView();
+      return;
+    }
+    if (comparison < 0) {
+      updateStatus = `Installiert: ${appVersion} · Server: ${remoteVersion}`;
+      refreshInfoView();
+      return;
+    }
+
+    pendingVersion = remoteVersion;
+    updateStatus = `Neue Version ${remoteVersion} gefunden.`;
+    refreshInfoView();
+    document.querySelector("#update-message").textContent =
+      `Version ${remoteVersion} ist verfügbar. Möchtest du das Update jetzt herunterladen und installieren?`;
+    document.querySelector("#update-dialog").showModal();
+  } catch (error) {
+    updateStatus = navigator.onLine
+      ? `Prüfung fehlgeschlagen: ${error.message}`
+      : "Keine Internetverbindung. Bitte später erneut versuchen.";
+    refreshInfoView();
+  }
+}
+
+async function refreshAppShell() {
+  if (!("serviceWorker" in navigator)) throw new Error("Offline-Updates werden nicht unterstützt");
+  const registration = await navigator.serviceWorker.ready;
+  const worker = navigator.serviceWorker.controller || registration.active;
+  if (!worker) throw new Error("Offline-Dienst ist noch nicht bereit");
+
+  return new Promise((resolve, reject) => {
+    const channel = new MessageChannel();
+    const timeout = window.setTimeout(() => reject(new Error("Update-Zeitüberschreitung")), 20000);
+    channel.port1.onmessage = (event) => {
+      window.clearTimeout(timeout);
+      if (event.data?.ok) resolve();
+      else reject(new Error(event.data?.error || "Update fehlgeschlagen"));
+    };
+    worker.postMessage({ type: "REFRESH_APP_SHELL" }, [channel.port2]);
+  });
+}
+
+async function installPendingUpdate() {
+  if (!pendingVersion) return;
+  const targetVersion = pendingVersion;
+  const confirmButton = document.querySelector("#confirm-update");
+  confirmButton.disabled = true;
+  confirmButton.textContent = "Wird geladen…";
+
+  try {
+    await refreshAppShell();
+    updateStatus = `Version ${targetVersion} wurde geladen. Neustart…`;
+    document.querySelector("#update-dialog").close();
+    showToast("Update installiert – Neustart…");
+    window.setTimeout(() => location.reload(), 450);
+  } catch (error) {
+    document.querySelector("#update-dialog").close();
+    updateStatus = `Installation fehlgeschlagen: ${error.message}`;
+    pendingVersion = null;
+    refreshInfoView();
+  } finally {
+    confirmButton.disabled = false;
+    confirmButton.textContent = "Herunterladen";
+  }
 }
 
 function startWorkout() {
@@ -545,6 +693,7 @@ app.addEventListener("click", (event) => {
     render();
   }
   if (action === "delete-library-exercise") deleteLibraryExercise(button.dataset.libraryId);
+  if (action === "check-update") checkForUpdates();
 });
 
 app.addEventListener("change", (event) => {
@@ -567,6 +716,7 @@ searchInput.addEventListener("input", renderPicker);
 document.querySelector("#create-from-picker").addEventListener("click", () => openNewExercise(true));
 document.querySelector("#new-exercise-form").addEventListener("submit", submitNewExercise);
 document.querySelector("#confirm-finish").addEventListener("click", finishWorkout);
+document.querySelector("#confirm-update").addEventListener("click", installPendingUpdate);
 
 document.addEventListener("click", (event) => {
   const closeButton = event.target.closest("[data-close-dialog]");
@@ -585,8 +735,10 @@ function updateClock() {
 
 window.setInterval(updateClock, 1000);
 updateClock();
-render();
+loadInstalledVersion().finally(render);
 
 if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js", { updateViaCache: "none" }).catch(() => {});
+  });
 }

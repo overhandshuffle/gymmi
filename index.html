@@ -30,6 +30,7 @@
           <button class="tab is-active" type="button" data-view="workout">Workout</button>
           <button class="tab" type="button" data-view="exercises">Übungen</button>
           <button class="tab" type="button" data-view="history">Verlauf</button>
+          <button class="tab" type="button" data-view="info">Info</button>
         </nav>
 
         <main id="app" class="app-content" tabindex="-1"></main>
@@ -107,6 +108,25 @@
           </div>
         </div>
       </form>
+    </dialog>
+
+    <dialog class="win-dialog confirm-dialog" id="update-dialog" aria-labelledby="update-title">
+      <div class="dialog-window">
+        <header class="title-bar">
+          <strong id="update-title">Update gefunden</strong>
+          <button class="window-close" type="button" data-close-dialog="update-dialog" aria-label="Fenster schließen">×</button>
+        </header>
+        <div class="dialog-content">
+          <div class="message-box">
+            <span class="message-icon message-icon--download" aria-hidden="true">↓</span>
+            <p id="update-message">Eine neue Version ist verfügbar.</p>
+          </div>
+          <div class="dialog-actions">
+            <button class="win-button" type="button" data-close-dialog="update-dialog">Später</button>
+            <button class="win-button win-button--primary" id="confirm-update" type="button">Herunterladen</button>
+          </div>
+        </div>
+      </div>
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
