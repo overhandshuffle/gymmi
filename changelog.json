@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "version": "1.1.1",
+      "date": "2026-08-01",
+      "title": "Stabile Übungsauswahl",
+      "changes": [
+        "Die Übungsauswahl behält beim Öffnen der iPhone-Tastatur ihre Größe und Position.",
+        "Untere Übungen und der Button für eigene Übungen bleiben über zusätzlichen Scrollraum erreichbar.",
+        "Ein abrufbarer Versionsverlauf wurde im Info-Tab ergänzt.",
+        "Der Speicherbedarf der lokalen Trainingsdaten wird im Info-Tab angezeigt."
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-08-01",
+      "title": "Vorlagen und Datenverwaltung",
+      "changes": [
+        "JSON-Backups können geprüft und wieder importiert werden.",
+        "Workouts lassen sich als Vorlagen speichern und erneut starten.",
+        "Die letzten Trainingswerte werden direkt bei der jeweiligen Übung angezeigt.",
+        "Gespeicherte Workouts können bearbeitet oder aus dem Verlauf gelöscht werden."
+      ]
+    },
+    {
+      "version": "1.0.1",
+      "date": "2026-08-01",
+      "title": "Backups und Updates",
+      "changes": [
+        "Trainingsdaten können als JSON-Backup exportiert werden.",
+        "Die installierte Version ist im Info-Tab sichtbar.",
+        "Updates können manuell geprüft und nach Bestätigung installiert werden."
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-08-01",
+      "title": "Erste Version",
+      "changes": [
+        "Workouts mit Übungen, Sätzen, Wiederholungen und Gewichten können lokal getrackt werden.",
+        "Eigene Übungen lassen sich nach Muskelgruppen anlegen.",
+        "Abgeschlossene Trainings werden im Verlauf gespeichert.",
+        "Die App kann als PWA installiert und offline verwendet werden."
+      ]
+    }
+  ]
+}

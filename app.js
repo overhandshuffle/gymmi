@@ -33,6 +33,7 @@ const initialState = {
   exercises: STARTER_EXERCISES,
   activeWorkout: null,
   history: [],
+  templates: [],
   selectedGroup: "Alle",
 };
 
@@ -44,29 +45,124 @@ let toastTimer;
 let appVersion = "…";
 let pendingVersion = null;
 let updateStatus = "";
+let pendingImportState = null;
+let editingHistoryId = null;
+let pickerViewportHeight = 0;
+let changelogEntries = null;
 
 const app = document.querySelector("#app");
 const picker = document.querySelector("#exercise-picker");
 const newExerciseDialog = document.querySelector("#new-exercise-dialog");
 const finishDialog = document.querySelector("#finish-dialog");
 const searchInput = document.querySelector("#exercise-search");
+const importInput = document.querySelector("#json-import-input");
+const importDialog = document.querySelector("#import-dialog");
+const templateDialog = document.querySelector("#template-dialog");
+const historyEditDialog = document.querySelector("#history-edit-dialog");
+const changelogDialog = document.querySelector("#changelog-dialog");
 
 function makeId(prefix) {
   const randomPart = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
   return `${prefix}-${randomPart}`;
 }
 
+function cleanText(value, maxLength = 80) {
+  return String(value ?? "").trim().slice(0, maxLength);
+}
+
+function normalizeSet(raw = {}) {
+  return {
+    id: cleanText(raw.id, 120) || makeId("set"),
+    reps: cleanText(raw.reps, 8),
+    weight: cleanText(raw.weight, 10),
+    done: Boolean(raw.done),
+  };
+}
+
+function normalizeWorkoutExercise(raw = {}) {
+  const name = cleanText(raw.name, 42);
+  const group = GROUPS.includes(raw.group) ? raw.group : "Core";
+  if (!name) return null;
+  const sets = Array.isArray(raw.sets) ? raw.sets.slice(0, 99).map(normalizeSet) : [];
+  return {
+    id: cleanText(raw.id, 120) || makeId("workout-exercise"),
+    libraryId: cleanText(raw.libraryId, 120),
+    name,
+    group,
+    sets: sets.length ? sets : [makeSet()],
+  };
+}
+
+function normalizeWorkout(raw = {}, includeEnd = true) {
+  const startedAt = Number(raw.startedAt);
+  if (!Number.isFinite(startedAt) || !Array.isArray(raw.exercises)) return null;
+  const exercises = raw.exercises
+    .slice(0, 100)
+    .map(normalizeWorkoutExercise)
+    .filter(Boolean);
+  const workout = {
+    id: cleanText(raw.id, 120) || makeId("workout"),
+    startedAt,
+    exercises,
+  };
+  const endedAt = Number(raw.endedAt);
+  if (includeEnd && Number.isFinite(endedAt)) workout.endedAt = Math.max(startedAt, endedAt);
+  return workout;
+}
+
+function normalizeTemplate(raw = {}) {
+  const name = cleanText(raw.name, 42);
+  if (!name || !Array.isArray(raw.exercises)) return null;
+  const exercises = raw.exercises.slice(0, 100).map((exercise) => {
+    const exerciseName = cleanText(exercise.name, 42);
+    if (!exerciseName) return null;
+    return {
+      libraryId: cleanText(exercise.libraryId, 120),
+      name: exerciseName,
+      group: GROUPS.includes(exercise.group) ? exercise.group : "Core",
+      setCount: Math.min(99, Math.max(1, Number.parseInt(exercise.setCount, 10) || 1)),
+    };
+  }).filter(Boolean);
+  return {
+    id: cleanText(raw.id, 120) || makeId("template"),
+    name,
+    createdAt: Number.isFinite(Number(raw.createdAt)) ? Number(raw.createdAt) : Date.now(),
+    exercises,
+  };
+}
+
+function normalizeState(raw, strict = false) {
+  if (!raw || !Array.isArray(raw.exercises) || !Array.isArray(raw.history)) {
+    if (strict) throw new Error("Das Backup enthält keine gültigen GYMMI-Daten.");
+    return structuredClone(initialState);
+  }
+
+  const exercises = raw.exercises.slice(0, 1000).map((exercise) => {
+    const name = cleanText(exercise.name, 42);
+    if (!name) return null;
+    return {
+      id: cleanText(exercise.id, 120) || makeId("exercise"),
+      name,
+      group: GROUPS.includes(exercise.group) ? exercise.group : "Core",
+      custom: Boolean(exercise.custom),
+    };
+  }).filter(Boolean);
+  if (strict && !exercises.length) throw new Error("Im Backup wurden keine gültigen Übungen gefunden.");
+
+  return {
+    exercises: exercises.length ? exercises : structuredClone(STARTER_EXERCISES),
+    activeWorkout: raw.activeWorkout ? normalizeWorkout(raw.activeWorkout, false) : null,
+    history: raw.history.slice(0, 5000).map((workout) => normalizeWorkout(workout, true)).filter(Boolean),
+    templates: Array.isArray(raw.templates)
+      ? raw.templates.slice(0, 500).map(normalizeTemplate).filter(Boolean)
+      : [],
+    selectedGroup: GROUPS.includes(raw.selectedGroup) ? raw.selectedGroup : "Alle",
+  };
+}
+
 function loadState() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!saved || !Array.isArray(saved.exercises) || !Array.isArray(saved.history)) {
-      return structuredClone(initialState);
-    }
-    return {
-      ...structuredClone(initialState),
-      ...saved,
-      selectedGroup: GROUPS.includes(saved.selectedGroup) ? saved.selectedGroup : "Alle",
-    };
+    return normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY)));
   } catch {
     return structuredClone(initialState);
   }
@@ -75,6 +171,7 @@ function loadState() {
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   const status = document.querySelector("#storage-status");
+  if (!status) return;
   status.textContent = "GESPEICHERT ✓";
   window.setTimeout(() => {
     status.textContent = "LOKAL GESPEICHERT";
@@ -131,14 +228,31 @@ function render() {
 function renderWorkout() {
   const workout = state.activeWorkout;
   if (!workout) {
+    const templates = [...state.templates].sort((a, b) => b.createdAt - a.createdAt);
     app.innerHTML = `
-      <section class="empty-state">
-        <div class="empty-state__icon" aria-hidden="true"><span class="empty-state__bar"></span></div>
-        <h1>KEIN WORKOUT AKTIV</h1>
-        <p>Starte ein leeres Training und füge danach deine Übungen und Sätze hinzu.</p>
-        <button class="win-button win-button--primary" type="button" data-action="start-workout">
-          Neues Workout starten
-        </button>
+      <section>
+        <div class="empty-state">
+          <div class="empty-state__icon" aria-hidden="true"><span class="empty-state__bar"></span></div>
+          <h1>KEIN WORKOUT AKTIV</h1>
+          <p>Starte ein leeres Training oder verwende eine deiner Vorlagen.</p>
+          <button class="win-button win-button--primary" type="button" data-action="start-workout">
+            Leeres Workout starten
+          </button>
+        </div>
+        <div class="template-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">GESPEICHERTE ROUTINEN</p>
+              <h2>Workout-Vorlagen</h2>
+            </div>
+            <span class="counter-badge">${templates.length}</span>
+          </div>
+          <div class="template-list">
+            ${templates.length ? templates.map(templateItem).join("") : `
+              <p class="empty-list">Noch keine Vorlage. Starte ein Workout und speichere die Übungsauswahl als Vorlage.</p>
+            `}
+          </div>
+        </div>
       </section>
     `;
     return;
@@ -152,7 +266,10 @@ function renderWorkout() {
           <p class="eyebrow">AKTUELLES WORKOUT</p>
           <h1 class="view-title">Training läuft</h1>
         </div>
-        <button class="win-button win-button--danger" type="button" data-action="discard-workout">Verwerfen</button>
+        <div class="header-actions">
+          ${workout.exercises.length ? '<button class="win-button" type="button" data-action="open-template-dialog">Als Vorlage</button>' : ""}
+          <button class="win-button win-button--danger" type="button" data-action="discard-workout">Verwerfen</button>
+        </div>
       </div>
       <div class="workout-meta">
         <div class="metric"><span>ZEIT</span><strong id="workout-timer">${formatDuration(workout.startedAt)}</strong></div>
@@ -169,7 +286,41 @@ function renderWorkout() {
   `;
 }
 
+function templateItem(template) {
+  const names = template.exercises.map((exercise) => exercise.name).join(" · ");
+  return `
+    <div class="template-item">
+      <div class="template-item__text">
+        <strong>${escapeHtml(template.name)}</strong>
+        <span class="muted">${template.exercises.length} Übungen${names ? ` · ${escapeHtml(names)}` : ""}</span>
+      </div>
+      <div class="template-item__actions">
+        <button class="win-button win-button--primary" type="button" data-action="start-template" data-template-id="${escapeHtml(template.id)}">Start</button>
+        <button class="icon-button" type="button" data-action="delete-template" data-template-id="${escapeHtml(template.id)}" aria-label="Vorlage ${escapeHtml(template.name)} löschen">×</button>
+      </div>
+    </div>
+  `;
+}
+
+function findLastExerciseValues(exercise) {
+  const workouts = [...state.history].sort((a, b) => b.startedAt - a.startedAt);
+  for (const workout of workouts) {
+    const match = workout.exercises.find((item) => (
+      (exercise.libraryId && item.libraryId === exercise.libraryId)
+      || item.name.toLocaleLowerCase("de") === exercise.name.toLocaleLowerCase("de")
+    ));
+    if (!match) continue;
+    const sets = match.sets.filter((set) => set.done || set.reps || set.weight);
+    if (sets.length) return { workout, sets };
+  }
+  return null;
+}
+
 function exerciseCard(exercise) {
+  const previous = findLastExerciseValues(exercise);
+  const previousValues = previous
+    ? previous.sets.map((set) => `${set.reps || "–"}× ${set.weight || "–"} kg`).join(" · ")
+    : "Noch keine Werte gespeichert";
   const rows = exercise.sets.map((set, index) => `
     <div class="set-row ${set.done ? "is-done" : ""}">
       <span class="set-row__number">${index + 1}</span>
@@ -234,6 +385,10 @@ function exerciseCard(exercise) {
           title="Übung entfernen"
         >×</button>
       </header>
+      <div class="previous-values">
+        <strong>LETZTES MAL${previous ? ` · ${formatDate(previous.workout.startedAt)}` : ""}</strong>
+        <span>${escapeHtml(previousValues)}</span>
+      </div>
       <div class="sets">${rows}</div>
       <div class="card-footer">
         <button class="win-button" type="button" data-action="remove-set" data-exercise-id="${exercise.id}" ${exercise.sets.length <= 1 ? "disabled" : ""}>− Satz</button>
@@ -304,6 +459,7 @@ function renderHistory() {
           <p class="eyebrow">TRAININGSLOG</p>
           <h1 class="view-title">${workouts.length} ${workouts.length === 1 ? "Workout" : "Workouts"}</h1>
         </div>
+        ${workouts.length ? '<button class="win-button win-button--danger" type="button" data-action="clear-history">Alle löschen</button>' : ""}
       </div>
       <div class="history-list">
         ${workouts.length ? workouts.map(historyItem).join("") : `
@@ -333,12 +489,40 @@ function historyItem(workout) {
         <span class="muted">${workout.exercises.length} Übungen · ${completedSets(workout)} Sätze</span>
         <span class="history-duration">${formatDuration(workout.startedAt, workout.endedAt)}</span>
       </summary>
-      <div class="history-details">${exerciseDetails || "Keine Übungen gespeichert."}</div>
+      <div class="history-details">
+        ${exerciseDetails || "Keine Übungen gespeichert."}
+        <div class="history-actions">
+          <button class="win-button" type="button" data-action="edit-history" data-workout-id="${escapeHtml(workout.id)}">Bearbeiten</button>
+          <button class="win-button win-button--danger" type="button" data-action="delete-history" data-workout-id="${escapeHtml(workout.id)}">Löschen</button>
+        </div>
+      </div>
     </details>
   `;
 }
 
+function localDataSize() {
+  const savedData = localStorage.getItem(STORAGE_KEY) || "";
+  return new TextEncoder().encode(savedData).byteLength;
+}
+
+function formatDataSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["KB", "MB", "GB"];
+  let value = bytes / 1024;
+  let unitIndex = 0;
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
+  const formatted = new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: value < 10 ? 1 : 0,
+    maximumFractionDigits: 1,
+  }).format(value);
+  return `${formatted} ${units[unitIndex]}`;
+}
+
 function renderInfo() {
+  const storageBytes = localDataSize();
   app.innerHTML = `
     <section>
       <div class="view-header">
@@ -362,12 +546,30 @@ function renderInfo() {
           </button>
           <div class="update-status" id="update-status" role="status" aria-live="polite">${escapeHtml(updateStatus)}</div>
         </div>
+        <div class="panel changelog-panel">
+          <h2>Versionsverlauf</h2>
+          <p class="muted">Zeigt Veröffentlichungsdatum und Änderungen aller bisherigen GYMMI-Versionen.</p>
+          <button class="win-button win-button--wide" type="button" data-action="open-changelog">
+            Changelog öffnen
+          </button>
+        </div>
         <div class="panel data-panel">
           <h2>Datenverwaltung</h2>
-          <p class="muted">Sichert Übungen, laufendes Workout und Trainingsverlauf in einer JSON-Datei.</p>
-          <button class="win-button win-button--wide" type="button" data-action="export-json">
-            JSON-Backup exportieren
-          </button>
+          <div class="storage-readout" title="${storageBytes} Byte">
+            <span>LOKALE GYMMI-DATEN</span>
+            <strong data-storage-size>${formatDataSize(storageBytes)}</strong>
+            <small>${state.exercises.length} Übungen · ${state.templates.length} Vorlagen · ${state.history.length} Workouts</small>
+          </div>
+          <p class="storage-note">Gemessen werden deine gespeicherten Trainingsdaten. Die installierten App-Dateien zählen nicht dazu.</p>
+          <p class="muted">Sichert oder ersetzt Übungen, Vorlagen, laufendes Workout und Trainingsverlauf.</p>
+          <div class="data-actions">
+            <button class="win-button win-button--wide" type="button" data-action="export-json">
+              JSON-Backup exportieren
+            </button>
+            <button class="win-button win-button--wide" type="button" data-action="import-json">
+              JSON-Backup importieren
+            </button>
+          </div>
         </div>
         <div class="panel">
           <strong>DATENSCHUTZ</strong>
@@ -380,6 +582,59 @@ function renderInfo() {
       </div>
     </section>
   `;
+}
+
+function formatChangelogDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value));
+  if (!match) return cleanText(value, 20) || "Datum unbekannt";
+  return `${match[3]}.${match[2]}.${match[1]}`;
+}
+
+function renderChangelogEntries(entries) {
+  return entries.map((entry) => {
+    const version = cleanText(entry.version, 20) || "unbekannt";
+    const title = cleanText(entry.title, 80) || "Update";
+    const changes = Array.isArray(entry.changes) ? entry.changes.slice(0, 30) : [];
+    return `
+      <article class="changelog-entry ${version === appVersion ? "is-current" : ""}">
+        <header class="changelog-entry__header">
+          <span class="changelog-version">v${escapeHtml(version)}</span>
+          <time datetime="${escapeHtml(entry.date)}">${escapeHtml(formatChangelogDate(entry.date))}</time>
+        </header>
+        <h3>${escapeHtml(title)}</h3>
+        <ul>
+          ${changes.map((change) => `<li>${escapeHtml(cleanText(change, 240))}</li>`).join("")}
+        </ul>
+      </article>
+    `;
+  }).join("");
+}
+
+async function openChangelog() {
+  const content = document.querySelector("#changelog-content");
+  content.innerHTML = '<div class="changelog-loading">CHANGELOG WIRD GELADEN…</div>';
+  changelogDialog.showModal();
+
+  try {
+    if (!changelogEntries) {
+      const response = await fetch("changelog.json");
+      if (!response.ok) throw new Error("Changelog nicht erreichbar");
+      const data = await response.json();
+      if (!Array.isArray(data.entries)) throw new Error("Changelog ist ungültig");
+      changelogEntries = data.entries;
+    }
+    content.innerHTML = changelogEntries.length
+      ? renderChangelogEntries(changelogEntries)
+      : '<p class="empty-list">Noch keine Versionseinträge vorhanden.</p>';
+  } catch (error) {
+    content.innerHTML = `
+      <div class="changelog-error">
+        <strong>FEHLER</strong>
+        <p>${escapeHtml(error.message)}</p>
+        <p>Bitte prüfe deine Verbindung und versuche es erneut.</p>
+      </div>
+    `;
+  }
 }
 
 function refreshInfoView() {
@@ -425,6 +680,42 @@ async function exportJsonBackup() {
   } catch (error) {
     if (error.name !== "AbortError") showToast("Export fehlgeschlagen");
   }
+}
+
+async function readJsonBackup(file) {
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast("Backup ist größer als 5 MB");
+    return;
+  }
+
+  try {
+    const backup = JSON.parse(await file.text());
+    if (backup.format !== "gymmi-backup" || !backup.data) {
+      throw new Error("Diese Datei ist kein GYMMI-Backup.");
+    }
+    pendingImportState = normalizeState(backup.data, true);
+    const activeText = pendingImportState.activeWorkout ? " · 1 laufendes Workout" : "";
+    document.querySelector("#import-message").textContent =
+      `${pendingImportState.exercises.length} Übungen · ${pendingImportState.templates.length} Vorlagen · ${pendingImportState.history.length} Workouts${activeText}. Deine aktuellen lokalen Daten werden ersetzt.`;
+    importDialog.showModal();
+  } catch (error) {
+    pendingImportState = null;
+    showToast(error instanceof SyntaxError ? "Ungültige JSON-Datei" : error.message);
+  } finally {
+    importInput.value = "";
+  }
+}
+
+function confirmJsonImport() {
+  if (!pendingImportState) return;
+  state = pendingImportState;
+  pendingImportState = null;
+  saveState();
+  importDialog.close();
+  currentView = "info";
+  render();
+  showToast("Backup importiert");
 }
 
 async function loadInstalledVersion() {
@@ -541,6 +832,69 @@ function startWorkout() {
   showToast("Workout gestartet");
 }
 
+function startWorkoutFromTemplate(templateId) {
+  const template = state.templates.find((item) => item.id === templateId);
+  if (!template) return;
+  state.activeWorkout = {
+    id: makeId("workout"),
+    startedAt: Date.now(),
+    exercises: template.exercises.map((exercise) => ({
+      id: makeId("workout-exercise"),
+      libraryId: exercise.libraryId,
+      name: exercise.name,
+      group: exercise.group,
+      sets: Array.from({ length: exercise.setCount }, makeSet),
+    })),
+  };
+  saveState();
+  render();
+  showToast(`„${template.name}“ gestartet`);
+}
+
+function openTemplateDialog() {
+  if (!state.activeWorkout?.exercises.length) return;
+  document.querySelector("#template-form").reset();
+  templateDialog.showModal();
+  window.setTimeout(() => document.querySelector("#template-name").focus(), 0);
+}
+
+function saveWorkoutTemplate(event) {
+  event.preventDefault();
+  const name = cleanText(new FormData(event.currentTarget).get("name"), 42);
+  if (!name || !state.activeWorkout?.exercises.length) return;
+  const duplicate = state.templates.some(
+    (template) => template.name.toLocaleLowerCase("de") === name.toLocaleLowerCase("de"),
+  );
+  if (duplicate) {
+    showToast("Eine Vorlage mit diesem Namen existiert schon");
+    return;
+  }
+  state.templates.push({
+    id: makeId("template"),
+    name,
+    createdAt: Date.now(),
+    exercises: state.activeWorkout.exercises.map((exercise) => ({
+      libraryId: exercise.libraryId,
+      name: exercise.name,
+      group: exercise.group,
+      setCount: exercise.sets.length,
+    })),
+  });
+  saveState();
+  templateDialog.close();
+  render();
+  showToast("Vorlage gespeichert");
+}
+
+function deleteTemplate(templateId) {
+  const template = state.templates.find((item) => item.id === templateId);
+  if (!template || !window.confirm(`Vorlage „${template.name}“ wirklich löschen?`)) return;
+  state.templates = state.templates.filter((item) => item.id !== templateId);
+  saveState();
+  render();
+  showToast("Vorlage gelöscht");
+}
+
 function makeSet() {
   return { id: makeId("set"), reps: "", weight: "", done: false };
 }
@@ -569,8 +923,22 @@ function openPicker() {
   pickerGroup = "Alle";
   searchInput.value = "";
   renderPicker();
+  pickerViewportHeight = window.visualViewport?.height || window.innerHeight;
+  const pickerHeight = Math.min(620, Math.max(360, pickerViewportHeight - 20));
+  const pickerTop = Math.max(10, (pickerViewportHeight - pickerHeight) / 2);
+  picker.style.setProperty("--picker-height", `${pickerHeight}px`);
+  picker.style.setProperty("--picker-top", `${pickerTop}px`);
+  picker.style.setProperty("--picker-keyboard-space", "0px");
   picker.showModal();
   window.setTimeout(() => searchInput.focus(), 0);
+}
+
+function updatePickerKeyboardSpace() {
+  if (!picker.open || !pickerViewportHeight) return;
+  const currentHeight = window.visualViewport?.height || window.innerHeight;
+  const keyboardSpace = Math.max(0, pickerViewportHeight - currentHeight);
+  picker.style.setProperty("--picker-keyboard-space", `${keyboardSpace}px`);
+  picker.classList.toggle("has-keyboard", keyboardSpace > 100);
 }
 
 function renderPicker() {
@@ -687,6 +1055,81 @@ function finishWorkout() {
   showToast("Workout gespeichert");
 }
 
+function toDateTimeLocal(timestamp) {
+  const date = new Date(timestamp);
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+}
+
+function openHistoryEditor(workoutId) {
+  const workout = state.history.find((item) => item.id === workoutId);
+  if (!workout) return;
+  editingHistoryId = workoutId;
+  const exercises = workout.exercises.map((exercise) => `
+    <fieldset class="edit-exercise">
+      <legend>${escapeHtml(exercise.name)}</legend>
+      ${exercise.sets.map((set, index) => `
+        <div class="edit-set-row">
+          <span>${index + 1}.</span>
+          <label>Wdh.<input class="win-input" type="number" inputmode="numeric" min="0" max="999" value="${escapeHtml(set.reps)}" data-edit-field="reps" data-exercise-id="${escapeHtml(exercise.id)}" data-set-id="${escapeHtml(set.id)}" /></label>
+          <label>KG<input class="win-input" type="number" inputmode="decimal" min="0" max="9999" step="0.5" value="${escapeHtml(set.weight)}" data-edit-field="weight" data-exercise-id="${escapeHtml(exercise.id)}" data-set-id="${escapeHtml(set.id)}" /></label>
+          <label class="edit-done"><input type="checkbox" data-edit-field="done" data-exercise-id="${escapeHtml(exercise.id)}" data-set-id="${escapeHtml(set.id)}" ${set.done ? "checked" : ""} />✓</label>
+        </div>
+      `).join("")}
+    </fieldset>
+  `).join("");
+  document.querySelector("#history-edit-content").innerHTML = `
+    <div>
+      <label class="field-label" for="history-edit-date">Datum und Uhrzeit</label>
+      <input class="win-input" id="history-edit-date" type="datetime-local" required value="${toDateTimeLocal(workout.startedAt)}" />
+    </div>
+    <div class="edit-workout-list">${exercises || '<p class="empty-list">Keine Übungen gespeichert.</p>'}</div>
+  `;
+  historyEditDialog.showModal();
+}
+
+function saveHistoryEdit(event) {
+  event.preventDefault();
+  const workout = state.history.find((item) => item.id === editingHistoryId);
+  if (!workout) return;
+  const newStartedAt = new Date(document.querySelector("#history-edit-date").value).getTime();
+  if (!Number.isFinite(newStartedAt)) {
+    showToast("Bitte Datum und Uhrzeit angeben");
+    return;
+  }
+  const duration = Math.max(0, Number(workout.endedAt || workout.startedAt) - workout.startedAt);
+  workout.startedAt = newStartedAt;
+  workout.endedAt = newStartedAt + duration;
+  document.querySelectorAll("#history-edit-content [data-edit-field]").forEach((input) => {
+    const exercise = workout.exercises.find((item) => item.id === input.dataset.exerciseId);
+    const set = exercise?.sets.find((item) => item.id === input.dataset.setId);
+    if (!set) return;
+    set[input.dataset.editField] = input.dataset.editField === "done" ? input.checked : input.value;
+  });
+  saveState();
+  editingHistoryId = null;
+  historyEditDialog.close();
+  render();
+  showToast("Workout geändert");
+}
+
+function deleteHistoryWorkout(workoutId) {
+  const workout = state.history.find((item) => item.id === workoutId);
+  if (!workout || !window.confirm(`Workout vom ${formatDate(workout.startedAt)} wirklich löschen?`)) return;
+  state.history = state.history.filter((item) => item.id !== workoutId);
+  saveState();
+  render();
+  showToast("Workout gelöscht");
+}
+
+function clearHistory() {
+  if (!state.history.length || !window.confirm("Wirklich den gesamten Trainingsverlauf löschen? Übungen und Vorlagen bleiben erhalten.")) return;
+  state.history = [];
+  saveState();
+  render();
+  showToast("Verlauf gelöscht");
+}
+
 function updateSet(input) {
   const exercise = findWorkoutExercise(input.dataset.exerciseId);
   const set = exercise?.sets.find((item) => item.id === input.dataset.setId);
@@ -743,6 +1186,14 @@ app.addEventListener("click", (event) => {
   if (action === "delete-library-exercise") deleteLibraryExercise(button.dataset.libraryId);
   if (action === "check-update") checkForUpdates();
   if (action === "export-json") exportJsonBackup();
+  if (action === "import-json") importInput.click();
+  if (action === "open-template-dialog") openTemplateDialog();
+  if (action === "start-template") startWorkoutFromTemplate(button.dataset.templateId);
+  if (action === "delete-template") deleteTemplate(button.dataset.templateId);
+  if (action === "edit-history") openHistoryEditor(button.dataset.workoutId);
+  if (action === "delete-history") deleteHistoryWorkout(button.dataset.workoutId);
+  if (action === "clear-history") clearHistory();
+  if (action === "open-changelog") openChangelog();
 });
 
 app.addEventListener("change", (event) => {
@@ -762,10 +1213,20 @@ document.querySelector("#picker-list").addEventListener("click", (event) => {
 });
 
 searchInput.addEventListener("input", renderPicker);
+window.visualViewport?.addEventListener("resize", updatePickerKeyboardSpace);
+picker.addEventListener("close", () => {
+  pickerViewportHeight = 0;
+  picker.classList.remove("has-keyboard");
+  picker.style.setProperty("--picker-keyboard-space", "0px");
+});
 document.querySelector("#create-from-picker").addEventListener("click", () => openNewExercise(true));
 document.querySelector("#new-exercise-form").addEventListener("submit", submitNewExercise);
+document.querySelector("#template-form").addEventListener("submit", saveWorkoutTemplate);
+document.querySelector("#history-edit-form").addEventListener("submit", saveHistoryEdit);
 document.querySelector("#confirm-finish").addEventListener("click", finishWorkout);
 document.querySelector("#confirm-update").addEventListener("click", installPendingUpdate);
+document.querySelector("#confirm-import").addEventListener("click", confirmJsonImport);
+importInput.addEventListener("change", () => readJsonBackup(importInput.files[0]));
 
 document.addEventListener("click", (event) => {
   const closeButton = event.target.closest("[data-close-dialog]");

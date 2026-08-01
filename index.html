@@ -129,6 +129,73 @@
       </div>
     </dialog>
 
+    <dialog class="win-dialog" id="template-dialog" aria-labelledby="template-title">
+      <form class="dialog-window" id="template-form">
+        <header class="title-bar">
+          <strong id="template-title">Workout-Vorlage speichern</strong>
+          <button class="window-close" type="button" data-close-dialog="template-dialog" aria-label="Fenster schließen">×</button>
+        </header>
+        <div class="dialog-content form-stack">
+          <div>
+            <label class="field-label" for="template-name">Name der Vorlage</label>
+            <input id="template-name" class="win-input" name="name" required maxlength="42" placeholder="z. B. Push Day" autocomplete="off" />
+          </div>
+          <p class="muted dialog-hint">Übungen und Satzanzahl werden übernommen. Gewichte und Wiederholungen bleiben im neuen Workout leer.</p>
+          <div class="dialog-actions">
+            <button class="win-button" type="button" data-close-dialog="template-dialog">Abbrechen</button>
+            <button class="win-button win-button--primary" type="submit">Vorlage speichern</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="win-dialog win-dialog--large" id="history-edit-dialog" aria-labelledby="history-edit-title">
+      <form class="dialog-window" id="history-edit-form">
+        <header class="title-bar">
+          <strong id="history-edit-title">Workout bearbeiten</strong>
+          <button class="window-close" type="button" data-close-dialog="history-edit-dialog" aria-label="Fenster schließen">×</button>
+        </header>
+        <div class="dialog-content form-stack">
+          <div id="history-edit-content"></div>
+          <div class="dialog-actions dialog-actions--sticky">
+            <button class="win-button" type="button" data-close-dialog="history-edit-dialog">Abbrechen</button>
+            <button class="win-button win-button--primary" type="submit">Änderungen speichern</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="win-dialog confirm-dialog" id="import-dialog" aria-labelledby="import-title">
+      <div class="dialog-window">
+        <header class="title-bar">
+          <strong id="import-title">Backup importieren</strong>
+          <button class="window-close" type="button" data-close-dialog="import-dialog" aria-label="Fenster schließen">×</button>
+        </header>
+        <div class="dialog-content">
+          <div class="message-box">
+            <span class="message-icon message-icon--warning" aria-hidden="true">!</span>
+            <p id="import-message">Die lokalen Daten werden durch das Backup ersetzt.</p>
+          </div>
+          <div class="dialog-actions">
+            <button class="win-button" type="button" data-close-dialog="import-dialog">Abbrechen</button>
+            <button class="win-button win-button--primary" id="confirm-import" type="button">Jetzt importieren</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="win-dialog win-dialog--large" id="changelog-dialog" aria-labelledby="changelog-title">
+      <div class="dialog-window">
+        <header class="title-bar">
+          <strong id="changelog-title">GYMMI – Versionsverlauf</strong>
+          <button class="window-close" type="button" data-close-dialog="changelog-dialog" aria-label="Fenster schließen">×</button>
+        </header>
+        <div class="dialog-content changelog-content" id="changelog-content"></div>
+      </div>
+    </dialog>
+
+    <input id="json-import-input" class="visually-hidden" type="file" accept="application/json,.json" />
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script src="app.js" defer></script>
