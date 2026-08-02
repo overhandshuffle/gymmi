@@ -118,11 +118,17 @@ summary:focus-visible {
 }
 
 .tabs {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 3px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
   padding: 5px 5px 0;
-  border-bottom: 2px groove var(--white);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab,
@@ -137,8 +143,12 @@ summary:focus-visible {
 }
 
 .tab {
-  min-width: 0;
-  padding-inline: 4px;
+  position: relative;
+  z-index: 0;
+  flex: 0 0 auto;
+  min-width: max-content;
+  padding-inline: 10px;
+  white-space: nowrap;
 }
 
 .tab:active,
@@ -149,11 +159,11 @@ summary:focus-visible {
 }
 
 .tab.is-active {
-  border-style: inset;
-  background-color: var(--surface-light);
-  background-image: radial-gradient(var(--white) 22%, transparent 25%);
-  background-size: 2px 2px;
-  font-weight: 700;
+  z-index: 1;
+  min-height: 36px;
+  border-style: outset;
+  border-bottom-color: var(--surface);
+  background: var(--surface);
 }
 
 .app-content {
