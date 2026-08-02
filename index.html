@@ -15,7 +15,7 @@
   </head>
   <body>
     <div class="desktop">
-      <div class="app-window" role="application" aria-label="GYMMI Workout Tracker">
+      <div class="app-window">
         <header class="title-bar">
           <div class="title-bar__title">
             <span class="app-icon" aria-hidden="true">G</span>
@@ -36,17 +36,17 @@
         <main id="app" class="app-content" tabindex="-1"></main>
 
         <footer class="status-bar">
-          <span class="status-bar__panel" id="storage-status" data-i18n="status.local">LOKAL GESPEICHERT</span>
+          <span class="status-bar__panel" id="storage-status">LOKAL GESPEICHERT</span>
           <span class="status-bar__panel status-bar__clock" id="clock">--:--</span>
         </footer>
       </div>
     </div>
 
     <dialog class="win-dialog" id="exercise-picker" aria-labelledby="picker-title">
-      <form method="dialog" class="dialog-window">
+      <div class="dialog-window">
         <header class="title-bar">
           <strong id="picker-title" data-i18n="picker.title">Übung hinzufügen</strong>
-          <button class="window-close" value="cancel" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
+          <button class="window-close" type="button" data-close-dialog="exercise-picker" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content">
           <label class="field-label" for="exercise-search" data-i18n="picker.search">Suchen:</label>
@@ -57,7 +57,7 @@
             + Eigene Übung erstellen
           </button>
         </div>
-      </form>
+      </div>
     </dialog>
 
     <dialog class="win-dialog" id="new-exercise-dialog" aria-labelledby="new-exercise-title">
@@ -100,10 +100,10 @@
     </dialog>
 
     <dialog class="win-dialog confirm-dialog" id="finish-dialog" aria-labelledby="finish-title">
-      <form method="dialog" class="dialog-window">
+      <div class="dialog-window">
         <header class="title-bar">
           <strong id="finish-title" data-i18n="finish.title">Workout abschließen</strong>
-          <button class="window-close" value="cancel" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
+          <button class="window-close" type="button" data-close-dialog="finish-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content">
           <div class="message-box">
@@ -111,11 +111,11 @@
             <p data-i18n="finish.message">Workout speichern und beenden?</p>
           </div>
           <div class="dialog-actions">
-            <button class="win-button" value="cancel" data-i18n="common.cancel">Abbrechen</button>
-            <button class="win-button win-button--primary" id="confirm-finish" value="default" data-i18n="finish.yes">Ja, speichern</button>
+            <button class="win-button" type="button" data-close-dialog="finish-dialog" data-i18n="common.cancel">Abbrechen</button>
+            <button class="win-button win-button--primary" id="confirm-finish" type="button" data-i18n="finish.yes">Ja, speichern</button>
           </div>
         </div>
-      </form>
+      </div>
     </dialog>
 
     <dialog class="win-dialog confirm-dialog" id="update-dialog" aria-labelledby="update-title">
@@ -231,10 +231,29 @@
       </div>
     </dialog>
 
+    <dialog class="win-dialog confirm-dialog" id="recovery-dialog" aria-labelledby="recovery-title">
+      <div class="dialog-window">
+        <header class="title-bar">
+          <strong id="recovery-title" data-i18n="recovery.title">Lokale Daten beschädigt</strong>
+        </header>
+        <div class="dialog-content">
+          <div class="message-box">
+            <span class="message-icon message-icon--warning" aria-hidden="true">!</span>
+            <p data-i18n="recovery.message">GYMMI kann die gespeicherten Daten nicht sicher lesen. Die Rohdaten bleiben unverändert, bis du sie exportierst oder bewusst zurücksetzt.</p>
+          </div>
+          <div class="dialog-actions recovery-actions">
+            <button class="win-button" id="export-recovery-data" type="button" data-i18n="recovery.export">Rohdaten exportieren</button>
+            <button class="win-button win-button--danger" id="reset-recovery-data" type="button" data-i18n="recovery.reset">Daten zurücksetzen</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
     <input id="json-import-input" class="visually-hidden" type="file" accept="application/json,.json" />
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <script src="data-store.js" defer></script>
     <script src="app.js" defer></script>
   </body>
 </html>

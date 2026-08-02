@@ -2,6 +2,44 @@
   "schemaVersion": 2,
   "entries": [
     {
+      "version": "1.4.0",
+      "date": "2026-08-02",
+      "title": {
+        "de": "Sichere Datenbasis und stabilere Bedienung",
+        "en": "Secure data foundation and more stable controls"
+      },
+      "changes": [
+        {
+          "de": "Backups und lokale Daten werden jetzt vollständig und strikt geprüft; alte oder unvollständige Formate werden nicht mehr automatisch migriert oder repariert.",
+          "en": "Backups and local data are now validated completely and strictly; old or incomplete formats are no longer migrated or repaired automatically."
+        },
+        {
+          "de": "Manipulierte IDs und ungültige Datentypen werden vor der Darstellung abgewiesen und alle dynamischen HTML-Attribute zusätzlich sicher maskiert.",
+          "en": "Manipulated IDs and invalid data types are rejected before rendering, with all dynamic HTML attributes additionally escaped."
+        },
+        {
+          "de": "Nicht lesbare lokale Daten bleiben für einen Rohdatenexport erhalten und können nur nach einer ausdrücklichen Bestätigung zurückgesetzt werden.",
+          "en": "Unreadable local data is preserved for raw export and can only be reset after explicit confirmation."
+        },
+        {
+          "de": "Satzwerte werden schon während der Eingabe gespeichert und beim Schließen oder Wechsel in den Hintergrund zuverlässig gesichert.",
+          "en": "Set values are saved while typing and reliably flushed when the app closes or moves to the background."
+        },
+        {
+          "de": "Enter im Übungsfilter schließt die Auswahl nicht mehr; Tastaturverschiebungen auf iOS werden ebenfalls berücksichtigt.",
+          "en": "Pressing Enter in the exercise filter no longer closes the picker, and iOS keyboard viewport shifts are now handled as well."
+        },
+        {
+          "de": "Die Updateprüfung besitzt feste Zeitlimits, letzte Trainingswerte ignorieren leere Einträge und unnötige Render- sowie Speicheraufrufe wurden entfernt.",
+          "en": "Update checks now have fixed timeouts, previous workout values ignore empty entries, and redundant render and storage calls were removed."
+        },
+        {
+          "de": "Die Datenprüfung wurde in ein eigenes Modul ausgelagert und durch automatisierte Tests für Schema, IDs und Backups abgesichert.",
+          "en": "Data validation was moved into a dedicated module and covered by automated schema, ID, and backup tests."
+        }
+      ]
+    },
+    {
       "version": "1.3.3",
       "date": "2026-08-02",
       "title": {

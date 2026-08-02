@@ -1,8 +1,9 @@
-const CACHE_NAME = "gymmi-shell-v1";
+const CACHE_NAME = "gymmi-shell-v1.4.0";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
+  "./data-store.js",
   "./app.js",
   "./version.json",
   "./changelog.json",

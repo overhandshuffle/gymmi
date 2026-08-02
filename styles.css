@@ -9,7 +9,6 @@
   --shadow: #808080;
   --dark: #000000;
   --navy: #000080;
-  --blue: #1084d0;
   --green: #008000;
   --red: #a40000;
 }
@@ -167,8 +166,7 @@ summary:focus:not(:focus-visible),
   white-space: nowrap;
 }
 
-.win-button:active,
-.win-button.is-pressed {
+.win-button:active {
   padding: 6px 9px 4px 11px;
   border-style: inset;
 }
@@ -846,6 +844,14 @@ summary:focus:not(:focus-visible),
   background: var(--surface);
 }
 
+.recovery-actions {
+  flex-direction: column;
+}
+
+.recovery-actions .win-button {
+  width: 100%;
+}
+
 .dialog-hint {
   margin: -3px 0 0;
   line-height: 1.4;
@@ -1253,12 +1259,6 @@ summary:focus:not(:focus-visible),
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-}
-
-@media (max-width: 350px) {
-  .tab {
-    font-size: 12px;
-  }
 }
 
 .toast {

@@ -1,7 +1,7 @@
 {
   "name": "GYMMI Workout Tracker",
   "short_name": "GYMMI",
-  "description": "A small, local-first workout tracker with a Windows 98 look.",
+  "description": "Ein kleiner, lokaler Workout-Tracker im Windows-98-Look.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#008080",
