@@ -60,6 +60,8 @@ const importDialog = document.querySelector("#import-dialog");
 const templateDialog = document.querySelector("#template-dialog");
 const historyEditDialog = document.querySelector("#history-edit-dialog");
 const changelogDialog = document.querySelector("#changelog-dialog");
+const confirmationDialog = document.querySelector("#confirmation-dialog");
+let confirmationResolver = null;
 
 function makeId(prefix) {
   const randomPart = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
@@ -886,9 +888,16 @@ function saveWorkoutTemplate(event) {
   showToast("Vorlage gespeichert");
 }
 
-function deleteTemplate(templateId) {
+async function deleteTemplate(templateId) {
   const template = state.templates.find((item) => item.id === templateId);
-  if (!template || !window.confirm(`Vorlage „${template.name}“ wirklich löschen?`)) return;
+  if (!template) return;
+  const confirmed = await askForConfirmation({
+    title: "Vorlage löschen",
+    message: `Soll die Vorlage „${template.name}“ wirklich gelöscht werden?`,
+    confirmLabel: "Löschen",
+    danger: true,
+  });
+  if (!confirmed) return;
   state.templates = state.templates.filter((item) => item.id !== templateId);
   saveState();
   render();
@@ -1003,7 +1012,7 @@ function findWorkoutExercise(id) {
   return state.activeWorkout?.exercises.find((exercise) => exercise.id === id);
 }
 
-function handleWorkoutAction(button) {
+async function handleWorkoutAction(button) {
   const action = button.dataset.action;
   const exerciseId = button.dataset.exerciseId;
   const exercise = exerciseId ? findWorkoutExercise(exerciseId) : null;
@@ -1012,12 +1021,17 @@ function handleWorkoutAction(button) {
   if (action === "open-picker") openPicker();
   if (action === "finish-workout") finishDialog.showModal();
   if (action === "discard-workout") {
-    if (window.confirm("Aktuelles Workout wirklich verwerfen?")) {
-      state.activeWorkout = null;
-      saveState();
-      render();
-      showToast("Workout verworfen");
-    }
+    const confirmed = await askForConfirmation({
+      title: "Workout verwerfen",
+      message: "Soll das aktuelle Workout wirklich verworfen werden? Alle noch nicht gespeicherten Sätze gehen verloren.",
+      confirmLabel: "Verwerfen",
+      danger: true,
+    });
+    if (!confirmed) return;
+    state.activeWorkout = null;
+    saveState();
+    render();
+    showToast("Workout verworfen");
   }
   if (action === "add-set" && exercise) {
     exercise.sets.push(makeSet());
@@ -1113,17 +1127,31 @@ function saveHistoryEdit(event) {
   showToast("Workout geändert");
 }
 
-function deleteHistoryWorkout(workoutId) {
+async function deleteHistoryWorkout(workoutId) {
   const workout = state.history.find((item) => item.id === workoutId);
-  if (!workout || !window.confirm(`Workout vom ${formatDate(workout.startedAt)} wirklich löschen?`)) return;
+  if (!workout) return;
+  const confirmed = await askForConfirmation({
+    title: "Workout löschen",
+    message: `Soll das Workout vom ${formatDate(workout.startedAt)} wirklich aus dem Verlauf gelöscht werden?`,
+    confirmLabel: "Löschen",
+    danger: true,
+  });
+  if (!confirmed) return;
   state.history = state.history.filter((item) => item.id !== workoutId);
   saveState();
   render();
   showToast("Workout gelöscht");
 }
 
-function clearHistory() {
-  if (!state.history.length || !window.confirm("Wirklich den gesamten Trainingsverlauf löschen? Übungen und Vorlagen bleiben erhalten.")) return;
+async function clearHistory() {
+  if (!state.history.length) return;
+  const confirmed = await askForConfirmation({
+    title: "Verlauf löschen",
+    message: `Sollen wirklich alle ${state.history.length} Workouts aus dem Verlauf gelöscht werden? Übungen und Vorlagen bleiben erhalten.`,
+    confirmLabel: "Alle löschen",
+    danger: true,
+  });
+  if (!confirmed) return;
   state.history = [];
   saveState();
   render();
@@ -1138,10 +1166,16 @@ function updateSet(input) {
   saveState();
 }
 
-function deleteLibraryExercise(id) {
+async function deleteLibraryExercise(id) {
   const exercise = state.exercises.find((item) => item.id === id);
   if (!exercise?.custom) return;
-  if (!window.confirm(`„${exercise.name}“ wirklich löschen?`)) return;
+  const confirmed = await askForConfirmation({
+    title: "Übung löschen",
+    message: `Soll die Übung „${exercise.name}“ wirklich aus der Bibliothek gelöscht werden? Bereits gespeicherte Workouts bleiben erhalten.`,
+    confirmLabel: "Löschen",
+    danger: true,
+  });
+  if (!confirmed) return;
   state.exercises = state.exercises.filter((item) => item.id !== id);
   saveState();
   render();
@@ -1154,6 +1188,32 @@ function showToast(message) {
   toast.classList.add("is-visible");
   window.clearTimeout(toastTimer);
   toastTimer = window.setTimeout(() => toast.classList.remove("is-visible"), 1800);
+}
+
+function askForConfirmation({
+  title = "Aktion bestätigen",
+  message,
+  confirmLabel = "Bestätigen",
+  danger = false,
+}) {
+  return new Promise((resolve) => {
+    confirmationResolver = resolve;
+    document.querySelector("#confirmation-title").textContent = title;
+    document.querySelector("#confirmation-message").textContent = message;
+    const confirmButton = document.querySelector("#confirmation-accept");
+    confirmButton.textContent = confirmLabel;
+    confirmButton.classList.toggle("win-button--danger", danger);
+    confirmationDialog.showModal();
+    document.querySelector("#confirmation-cancel").focus();
+  });
+}
+
+function settleConfirmation(confirmed) {
+  if (!confirmationResolver) return;
+  const resolve = confirmationResolver;
+  confirmationResolver = null;
+  if (confirmationDialog.open) confirmationDialog.close();
+  resolve(confirmed);
 }
 
 document.querySelector(".tabs").addEventListener("click", (event) => {
@@ -1226,6 +1286,9 @@ document.querySelector("#history-edit-form").addEventListener("submit", saveHist
 document.querySelector("#confirm-finish").addEventListener("click", finishWorkout);
 document.querySelector("#confirm-update").addEventListener("click", installPendingUpdate);
 document.querySelector("#confirm-import").addEventListener("click", confirmJsonImport);
+document.querySelector("#confirmation-cancel").addEventListener("click", () => settleConfirmation(false));
+document.querySelector("#confirmation-accept").addEventListener("click", () => settleConfirmation(true));
+confirmationDialog.addEventListener("close", () => settleConfirmation(false));
 importInput.addEventListener("change", () => readJsonBackup(importInput.files[0]));
 
 document.addEventListener("click", (event) => {

@@ -184,6 +184,25 @@
       </div>
     </dialog>
 
+    <dialog class="win-dialog confirm-dialog" id="confirmation-dialog" aria-labelledby="confirmation-title">
+      <div class="dialog-window">
+        <header class="title-bar">
+          <strong id="confirmation-title">Aktion bestätigen</strong>
+          <button class="window-close" type="button" data-close-dialog="confirmation-dialog" aria-label="Fenster schließen">×</button>
+        </header>
+        <div class="dialog-content">
+          <div class="message-box">
+            <span class="message-icon message-icon--warning" aria-hidden="true">!</span>
+            <p id="confirmation-message">Soll diese Aktion wirklich ausgeführt werden?</p>
+          </div>
+          <div class="dialog-actions">
+            <button class="win-button" id="confirmation-cancel" type="button" autofocus>Abbrechen</button>
+            <button class="win-button win-button--primary" id="confirmation-accept" type="button">Bestätigen</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
     <dialog class="win-dialog win-dialog--large" id="changelog-dialog" aria-labelledby="changelog-title">
       <div class="dialog-window">
         <header class="title-bar">
