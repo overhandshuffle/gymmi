@@ -26,17 +26,17 @@
           </div>
         </header>
 
-        <nav class="tabs" aria-label="Hauptnavigation">
-          <button class="tab is-active" type="button" data-view="workout">Workout</button>
-          <button class="tab" type="button" data-view="exercises">Übungen</button>
-          <button class="tab" type="button" data-view="history">Verlauf</button>
-          <button class="tab" type="button" data-view="info">Info</button>
+        <nav class="tabs" aria-label="Hauptnavigation" data-i18n-aria-label="nav.main">
+          <button class="tab is-active" type="button" data-view="workout" data-i18n="nav.workout">Workout</button>
+          <button class="tab" type="button" data-view="exercises" data-i18n="nav.exercises">Übungen</button>
+          <button class="tab" type="button" data-view="history" data-i18n="nav.history">Verlauf</button>
+          <button class="tab" type="button" data-view="info" data-i18n="nav.settings">Einstellungen</button>
         </nav>
 
         <main id="app" class="app-content" tabindex="-1"></main>
 
         <footer class="status-bar">
-          <span class="status-bar__panel" id="storage-status">LOKAL GESPEICHERT</span>
+          <span class="status-bar__panel" id="storage-status" data-i18n="status.local">LOKAL GESPEICHERT</span>
           <span class="status-bar__panel status-bar__clock" id="clock">--:--</span>
         </footer>
       </div>
@@ -45,15 +45,15 @@
     <dialog class="win-dialog" id="exercise-picker" aria-labelledby="picker-title">
       <form method="dialog" class="dialog-window">
         <header class="title-bar">
-          <strong id="picker-title">Übung hinzufügen</strong>
-          <button class="window-close" value="cancel" aria-label="Fenster schließen">×</button>
+          <strong id="picker-title" data-i18n="picker.title">Übung hinzufügen</strong>
+          <button class="window-close" value="cancel" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content">
-          <label class="field-label" for="exercise-search">Suchen:</label>
+          <label class="field-label" for="exercise-search" data-i18n="picker.search">Suchen:</label>
           <input id="exercise-search" class="win-input" type="search" autocomplete="off" />
-          <div id="picker-groups" class="filter-row" aria-label="Nach Muskelgruppe filtern"></div>
+          <div id="picker-groups" class="filter-row" aria-label="Nach Muskelgruppe filtern" data-i18n-aria-label="picker.filter"></div>
           <div id="picker-list" class="picker-list"></div>
-          <button class="win-button win-button--wide" id="create-from-picker" type="button">
+          <button class="win-button win-button--wide" id="create-from-picker" type="button" data-i18n="picker.create">
             + Eigene Übung erstellen
           </button>
         </div>
@@ -63,12 +63,12 @@
     <dialog class="win-dialog" id="new-exercise-dialog" aria-labelledby="new-exercise-title">
       <form class="dialog-window" id="new-exercise-form">
         <header class="title-bar">
-          <strong id="new-exercise-title">Neue Übung</strong>
-          <button class="window-close" type="button" data-close-dialog="new-exercise-dialog" aria-label="Fenster schließen">×</button>
+          <strong id="new-exercise-title" data-i18n="newExercise.title">Neue Übung</strong>
+          <button class="window-close" type="button" data-close-dialog="new-exercise-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content form-stack">
           <div>
-            <label class="field-label" for="new-exercise-name">Name</label>
+            <label class="field-label" for="new-exercise-name" data-i18n="newExercise.name">Name</label>
             <input
               id="new-exercise-name"
               class="win-input"
@@ -76,16 +76,24 @@
               required
               maxlength="42"
               placeholder="z. B. Schrägbankdrücken"
+              data-i18n-placeholder="newExercise.placeholder"
               autocomplete="off"
             />
           </div>
           <div>
-            <label class="field-label" for="new-exercise-group">Muskelgruppe</label>
+            <label class="field-label" for="new-exercise-group" data-i18n="newExercise.group">Muskelgruppe</label>
             <select id="new-exercise-group" class="win-input" name="group" required></select>
           </div>
+          <div>
+            <label class="field-label" for="new-exercise-tracking" data-i18n="newExercise.tracking">Eingaben pro Satz</label>
+            <select id="new-exercise-tracking" class="win-input" name="trackingMode" required>
+              <option value="weighted" data-i18n="newExercise.weighted">Wiederholungen und Gewicht</option>
+              <option value="reps" data-i18n="newExercise.repsOnly">Nur Wiederholungen</option>
+            </select>
+          </div>
           <div class="dialog-actions">
-            <button class="win-button" type="button" data-close-dialog="new-exercise-dialog">Abbrechen</button>
-            <button class="win-button win-button--primary" type="submit">Speichern</button>
+            <button class="win-button" type="button" data-close-dialog="new-exercise-dialog" data-i18n="common.cancel">Abbrechen</button>
+            <button class="win-button win-button--primary" type="submit" data-i18n="common.save">Speichern</button>
           </div>
         </div>
       </form>
@@ -94,17 +102,17 @@
     <dialog class="win-dialog confirm-dialog" id="finish-dialog" aria-labelledby="finish-title">
       <form method="dialog" class="dialog-window">
         <header class="title-bar">
-          <strong id="finish-title">Workout abschließen</strong>
-          <button class="window-close" value="cancel" aria-label="Fenster schließen">×</button>
+          <strong id="finish-title" data-i18n="finish.title">Workout abschließen</strong>
+          <button class="window-close" value="cancel" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content">
           <div class="message-box">
             <span class="message-icon" aria-hidden="true">?</span>
-            <p>Workout speichern und beenden?</p>
+            <p data-i18n="finish.message">Workout speichern und beenden?</p>
           </div>
           <div class="dialog-actions">
-            <button class="win-button" value="cancel">Abbrechen</button>
-            <button class="win-button win-button--primary" id="confirm-finish" value="default">Ja, speichern</button>
+            <button class="win-button" value="cancel" data-i18n="common.cancel">Abbrechen</button>
+            <button class="win-button win-button--primary" id="confirm-finish" value="default" data-i18n="finish.yes">Ja, speichern</button>
           </div>
         </div>
       </form>
@@ -113,17 +121,17 @@
     <dialog class="win-dialog confirm-dialog" id="update-dialog" aria-labelledby="update-title">
       <div class="dialog-window">
         <header class="title-bar">
-          <strong id="update-title">Update gefunden</strong>
-          <button class="window-close" type="button" data-close-dialog="update-dialog" aria-label="Fenster schließen">×</button>
+          <strong id="update-title" data-i18n="update.title">Update gefunden</strong>
+          <button class="window-close" type="button" data-close-dialog="update-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content">
           <div class="message-box">
             <span class="message-icon message-icon--download" aria-hidden="true">↓</span>
-            <p id="update-message">Eine neue Version ist verfügbar.</p>
+            <p id="update-message" data-i18n="update.available">Eine neue Version ist verfügbar.</p>
           </div>
           <div class="dialog-actions">
-            <button class="win-button" type="button" data-close-dialog="update-dialog">Später</button>
-            <button class="win-button win-button--primary" id="confirm-update" type="button">Herunterladen</button>
+            <button class="win-button" type="button" data-close-dialog="update-dialog" data-i18n="update.later">Später</button>
+            <button class="win-button win-button--primary" id="confirm-update" type="button" data-i18n="update.download">Herunterladen</button>
           </div>
         </div>
       </div>
@@ -132,18 +140,18 @@
     <dialog class="win-dialog" id="template-dialog" aria-labelledby="template-title">
       <form class="dialog-window" id="template-form">
         <header class="title-bar">
-          <strong id="template-title">Workout-Vorlage speichern</strong>
-          <button class="window-close" type="button" data-close-dialog="template-dialog" aria-label="Fenster schließen">×</button>
+          <strong id="template-title" data-i18n="template.dialogTitle">Workout-Vorlage speichern</strong>
+          <button class="window-close" type="button" data-close-dialog="template-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content form-stack">
           <div>
-            <label class="field-label" for="template-name">Name der Vorlage</label>
-            <input id="template-name" class="win-input" name="name" required maxlength="42" placeholder="z. B. Push Day" autocomplete="off" />
+            <label class="field-label" for="template-name" data-i18n="template.name">Name der Vorlage</label>
+            <input id="template-name" class="win-input" name="name" required maxlength="42" placeholder="z. B. Push Day" data-i18n-placeholder="template.placeholder" autocomplete="off" />
           </div>
-          <p class="muted dialog-hint">Übungen und Satzanzahl werden übernommen. Gewichte und Wiederholungen bleiben im neuen Workout leer.</p>
+          <p class="muted dialog-hint" data-i18n="template.hint">Übungen und Satzanzahl werden übernommen. Gewichte und Wiederholungen bleiben im neuen Workout leer.</p>
           <div class="dialog-actions">
-            <button class="win-button" type="button" data-close-dialog="template-dialog">Abbrechen</button>
-            <button class="win-button win-button--primary" type="submit">Vorlage speichern</button>
+            <button class="win-button" type="button" data-close-dialog="template-dialog" data-i18n="common.cancel">Abbrechen</button>
+            <button class="win-button win-button--primary" type="submit" data-i18n="template.save">Vorlage speichern</button>
           </div>
         </div>
       </form>
@@ -152,14 +160,14 @@
     <dialog class="win-dialog win-dialog--large" id="history-edit-dialog" aria-labelledby="history-edit-title">
       <form class="dialog-window" id="history-edit-form">
         <header class="title-bar">
-          <strong id="history-edit-title">Workout bearbeiten</strong>
-          <button class="window-close" type="button" data-close-dialog="history-edit-dialog" aria-label="Fenster schließen">×</button>
+          <strong id="history-edit-title" data-i18n="history.editTitle">Workout bearbeiten</strong>
+          <button class="window-close" type="button" data-close-dialog="history-edit-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content form-stack">
           <div id="history-edit-content"></div>
           <div class="dialog-actions dialog-actions--sticky">
-            <button class="win-button" type="button" data-close-dialog="history-edit-dialog">Abbrechen</button>
-            <button class="win-button win-button--primary" type="submit">Änderungen speichern</button>
+            <button class="win-button" type="button" data-close-dialog="history-edit-dialog" data-i18n="common.cancel">Abbrechen</button>
+            <button class="win-button win-button--primary" type="submit" data-i18n="history.saveChanges">Änderungen speichern</button>
           </div>
         </div>
       </form>
@@ -168,17 +176,17 @@
     <dialog class="win-dialog confirm-dialog" id="import-dialog" aria-labelledby="import-title">
       <div class="dialog-window">
         <header class="title-bar">
-          <strong id="import-title">Backup importieren</strong>
-          <button class="window-close" type="button" data-close-dialog="import-dialog" aria-label="Fenster schließen">×</button>
+          <strong id="import-title" data-i18n="import.title">Backup importieren</strong>
+          <button class="window-close" type="button" data-close-dialog="import-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content">
           <div class="message-box">
             <span class="message-icon message-icon--warning" aria-hidden="true">!</span>
-            <p id="import-message">Die lokalen Daten werden durch das Backup ersetzt.</p>
+            <p id="import-message" data-i18n="import.defaultMessage">Die lokalen Daten werden durch das Backup ersetzt.</p>
           </div>
           <div class="dialog-actions">
-            <button class="win-button" type="button" data-close-dialog="import-dialog">Abbrechen</button>
-            <button class="win-button win-button--primary" id="confirm-import" type="button">Jetzt importieren</button>
+            <button class="win-button" type="button" data-close-dialog="import-dialog" data-i18n="common.cancel">Abbrechen</button>
+            <button class="win-button win-button--primary" id="confirm-import" type="button" data-i18n="import.now">Jetzt importieren</button>
           </div>
         </div>
       </div>
@@ -187,17 +195,17 @@
     <dialog class="win-dialog confirm-dialog" id="confirmation-dialog" aria-labelledby="confirmation-title">
       <div class="dialog-window">
         <header class="title-bar">
-          <strong id="confirmation-title">Aktion bestätigen</strong>
-          <button class="window-close" type="button" data-close-dialog="confirmation-dialog" aria-label="Fenster schließen">×</button>
+          <strong id="confirmation-title" data-i18n="confirm.title">Aktion bestätigen</strong>
+          <button class="window-close" type="button" data-close-dialog="confirmation-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content">
           <div class="message-box">
             <span class="message-icon message-icon--warning" aria-hidden="true">!</span>
-            <p id="confirmation-message">Soll diese Aktion wirklich ausgeführt werden?</p>
+            <p id="confirmation-message" data-i18n="confirm.defaultMessage">Soll diese Aktion wirklich ausgeführt werden?</p>
           </div>
           <div class="dialog-actions">
-            <button class="win-button" id="confirmation-cancel" type="button" autofocus>Abbrechen</button>
-            <button class="win-button win-button--primary" id="confirmation-accept" type="button">Bestätigen</button>
+            <button class="win-button" id="confirmation-cancel" type="button" autofocus data-i18n="common.cancel">Abbrechen</button>
+            <button class="win-button win-button--primary" id="confirmation-accept" type="button" data-i18n="common.confirm">Bestätigen</button>
           </div>
         </div>
       </div>
@@ -206,8 +214,8 @@
     <dialog class="win-dialog win-dialog--large" id="changelog-dialog" aria-labelledby="changelog-title">
       <div class="dialog-window">
         <header class="title-bar">
-          <strong id="changelog-title">GYMMI – Versionsverlauf</strong>
-          <button class="window-close" type="button" data-close-dialog="changelog-dialog" aria-label="Fenster schließen">×</button>
+          <strong id="changelog-title" data-i18n="changelog.title">GYMMI – Versionsverlauf</strong>
+          <button class="window-close" type="button" data-close-dialog="changelog-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
         </header>
         <div class="dialog-content changelog-content" id="changelog-content"></div>
       </div>

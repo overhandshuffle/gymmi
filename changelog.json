@@ -1,56 +1,148 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "entries": [
+    {
+      "version": "1.2.0",
+      "date": "2026-08-02",
+      "title": {
+        "de": "Sprachen, Einheiten und Übungstypen",
+        "en": "Languages, units and exercise types"
+      },
+      "changes": [
+        {
+          "de": "Der Info-Tab heißt jetzt Einstellungen und bietet Deutsch sowie Englisch für die gesamte App.",
+          "en": "The Info tab is now called Settings and the entire app is available in German and English."
+        },
+        {
+          "de": "Gewichte können in Kilogramm oder Pfund eingegeben und angezeigt werden, ohne gespeicherte Werte beim Wechsel zu verändern.",
+          "en": "Weights can be entered and displayed in kilograms or pounds without changing saved values when switching units."
+        },
+        {
+          "de": "Neue Übungen können Wiederholungen mit Gewicht oder ausschließlich Wiederholungen erfassen.",
+          "en": "New exercises can track repetitions with weight or repetitions only."
+        },
+        {
+          "de": "JSON-Backups enthalten nun auch Sprache, Einheit und den Erfassungsmodus jeder Übung.",
+          "en": "JSON backups now include language, unit and the tracking mode of every exercise."
+        }
+      ]
+    },
     {
       "version": "1.1.2",
       "date": "2026-08-01",
-      "title": "Bestätigungen im Windows-98-Stil",
+      "title": {
+        "de": "Bestätigungen im Windows-98-Stil",
+        "en": "Windows 98-style confirmations"
+      },
       "changes": [
-        "Native Browser-Abfragen wurden durch einheitliche Windows-98-Dialoge ersetzt.",
-        "Löschen und Verwerfen zeigen nun passend beschriftete Warnfenster mit sicherer Abbrechen-Vorauswahl."
+        {
+          "de": "Native Browser-Abfragen wurden durch einheitliche Windows-98-Dialoge ersetzt.",
+          "en": "Native browser prompts were replaced with consistent Windows 98-style dialogs."
+        },
+        {
+          "de": "Löschen und Verwerfen zeigen nun passend beschriftete Warnfenster mit sicherer Abbrechen-Vorauswahl.",
+          "en": "Delete and discard actions now use clearly labelled warnings with Cancel selected by default."
+        }
       ]
     },
     {
       "version": "1.1.1",
       "date": "2026-08-01",
-      "title": "Stabile Übungsauswahl",
+      "title": {
+        "de": "Stabile Übungsauswahl",
+        "en": "Stable exercise picker"
+      },
       "changes": [
-        "Die Übungsauswahl behält beim Öffnen der iPhone-Tastatur ihre Größe und Position.",
-        "Untere Übungen und der Button für eigene Übungen bleiben über zusätzlichen Scrollraum erreichbar.",
-        "Ein abrufbarer Versionsverlauf wurde im Info-Tab ergänzt.",
-        "Der Speicherbedarf der lokalen Trainingsdaten wird im Info-Tab angezeigt."
+        {
+          "de": "Die Übungsauswahl behält beim Öffnen der iPhone-Tastatur ihre Größe und Position.",
+          "en": "The exercise picker keeps its size and position when the iPhone keyboard opens."
+        },
+        {
+          "de": "Untere Übungen und der Button für eigene Übungen bleiben über zusätzlichen Scrollraum erreichbar.",
+          "en": "Exercises near the bottom and the custom exercise button remain accessible through additional scrolling space."
+        },
+        {
+          "de": "Ein abrufbarer Versionsverlauf wurde im Info-Tab ergänzt.",
+          "en": "A version history was added to the Info tab."
+        },
+        {
+          "de": "Der Speicherbedarf der lokalen Trainingsdaten wird im Info-Tab angezeigt.",
+          "en": "The storage used by local workout data is shown in the Info tab."
+        }
       ]
     },
     {
       "version": "1.1.0",
       "date": "2026-08-01",
-      "title": "Vorlagen und Datenverwaltung",
+      "title": {
+        "de": "Vorlagen und Datenverwaltung",
+        "en": "Templates and data management"
+      },
       "changes": [
-        "JSON-Backups können geprüft und wieder importiert werden.",
-        "Workouts lassen sich als Vorlagen speichern und erneut starten.",
-        "Die letzten Trainingswerte werden direkt bei der jeweiligen Übung angezeigt.",
-        "Gespeicherte Workouts können bearbeitet oder aus dem Verlauf gelöscht werden."
+        {
+          "de": "JSON-Backups können geprüft und wieder importiert werden.",
+          "en": "JSON backups can be validated and imported."
+        },
+        {
+          "de": "Workouts lassen sich als Vorlagen speichern und erneut starten.",
+          "en": "Workouts can be saved as templates and started again."
+        },
+        {
+          "de": "Die letzten Trainingswerte werden direkt bei der jeweiligen Übung angezeigt.",
+          "en": "Previous workout values are shown directly on each exercise."
+        },
+        {
+          "de": "Gespeicherte Workouts können bearbeitet oder aus dem Verlauf gelöscht werden.",
+          "en": "Saved workouts can be edited or deleted from history."
+        }
       ]
     },
     {
       "version": "1.0.1",
       "date": "2026-08-01",
-      "title": "Backups und Updates",
+      "title": {
+        "de": "Backups und Updates",
+        "en": "Backups and updates"
+      },
       "changes": [
-        "Trainingsdaten können als JSON-Backup exportiert werden.",
-        "Die installierte Version ist im Info-Tab sichtbar.",
-        "Updates können manuell geprüft und nach Bestätigung installiert werden."
+        {
+          "de": "Trainingsdaten können als JSON-Backup exportiert werden.",
+          "en": "Workout data can be exported as a JSON backup."
+        },
+        {
+          "de": "Die installierte Version ist im Info-Tab sichtbar.",
+          "en": "The installed version is visible in the Info tab."
+        },
+        {
+          "de": "Updates können manuell geprüft und nach Bestätigung installiert werden.",
+          "en": "Updates can be checked manually and installed after confirmation."
+        }
       ]
     },
     {
       "version": "1.0.0",
       "date": "2026-08-01",
-      "title": "Erste Version",
+      "title": {
+        "de": "Erste Version",
+        "en": "First version"
+      },
       "changes": [
-        "Workouts mit Übungen, Sätzen, Wiederholungen und Gewichten können lokal getrackt werden.",
-        "Eigene Übungen lassen sich nach Muskelgruppen anlegen.",
-        "Abgeschlossene Trainings werden im Verlauf gespeichert.",
-        "Die App kann als PWA installiert und offline verwendet werden."
+        {
+          "de": "Workouts mit Übungen, Sätzen, Wiederholungen und Gewichten können lokal getrackt werden.",
+          "en": "Workouts with exercises, sets, repetitions and weights can be tracked locally."
+        },
+        {
+          "de": "Eigene Übungen lassen sich nach Muskelgruppen anlegen.",
+          "en": "Custom exercises can be organised by muscle group."
+        },
+        {
+          "de": "Abgeschlossene Trainings werden im Verlauf gespeichert.",
+          "en": "Completed workouts are stored in history."
+        },
+        {
+          "de": "Die App kann als PWA installiert und offline verwendet werden.",
+          "en": "The app can be installed as a PWA and used offline."
+        }
       ]
     }
   ]

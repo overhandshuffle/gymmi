@@ -2,6 +2,76 @@
 
 const STORAGE_KEY = "gymmi-state-v1";
 const GROUPS = ["Brust", "Rücken", "Beine", "Schultern", "Arme", "Core"];
+const SUPPORTED_LANGUAGES = ["de", "en"];
+const SUPPORTED_UNITS = ["kg", "lbs"];
+const TRACKING_MODES = ["weighted", "reps"];
+const KG_TO_LBS = 2.2046226218;
+
+const TRANSLATIONS = {
+  de: {
+    "nav.main": "Hauptnavigation", "nav.workout": "Workout", "nav.exercises": "Übungen", "nav.history": "Verlauf", "nav.settings": "Einstellungen",
+    "status.local": "LOKAL GESPEICHERT", "status.saved": "GESPEICHERT ✓",
+    "group.all": "Alle", "group.Brust": "Brust", "group.Rücken": "Rücken", "group.Beine": "Beine", "group.Schultern": "Schultern", "group.Arme": "Arme", "group.Core": "Core",
+    "exercise.benchPress": "Bankdrücken", "exercise.inclineBenchPress": "Schrägbankdrücken", "exercise.chestPress": "Brustpresse", "exercise.pullUps": "Klimmzüge", "exercise.latPulldown": "Latziehen", "exercise.row": "Rudern", "exercise.squats": "Kniebeugen", "exercise.legPress": "Beinpresse", "exercise.legCurl": "Beinbeuger", "exercise.shoulderPress": "Schulterdrücken", "exercise.lateralRaises": "Seitheben", "exercise.reverseFlys": "Reverse Flys", "exercise.bicepsCurls": "Bizeps Curls", "exercise.hammerCurls": "Hammer Curls", "exercise.tricepsPushdown": "Trizepsdrücken", "exercise.plank": "Plank", "exercise.crunches": "Crunches", "exercise.legRaises": "Beinheben",
+    "common.cancel": "Abbrechen", "common.save": "Speichern", "common.delete": "Löschen", "common.confirm": "Bestätigen", "common.closeWindow": "Fenster schließen", "common.error": "FEHLER", "common.unknown": "unbekannt",
+    "picker.title": "Übung hinzufügen", "picker.search": "Suchen:", "picker.filter": "Nach Muskelgruppe filtern", "picker.create": "+ Eigene Übung erstellen", "picker.add": "+ Hinzufügen", "picker.empty": "Keine Übung gefunden.",
+    "newExercise.title": "Neue Übung", "newExercise.name": "Name", "newExercise.placeholder": "z. B. Liegestütze", "newExercise.group": "Muskelgruppe", "newExercise.tracking": "Eingaben pro Satz", "newExercise.weighted": "Wiederholungen und Gewicht", "newExercise.repsOnly": "Nur Wiederholungen", "newExercise.exists": "Diese Übung gibt es bereits", "newExercise.saved": "Übung gespeichert",
+    "finish.title": "Workout abschließen", "finish.message": "Workout speichern und beenden?", "finish.yes": "Ja, speichern",
+    "update.title": "Update gefunden", "update.available": "Eine neue Version ist verfügbar.", "update.later": "Später", "update.download": "Herunterladen", "update.downloading": "Wird geladen…",
+    "template.dialogTitle": "Workout-Vorlage speichern", "template.name": "Name der Vorlage", "template.placeholder": "z. B. Push Day", "template.hint": "Übungen und Satzanzahl werden übernommen. Gewichte und Wiederholungen bleiben im neuen Workout leer.", "template.save": "Vorlage speichern",
+    "history.editTitle": "Workout bearbeiten", "history.saveChanges": "Änderungen speichern", "history.dateTime": "Datum und Uhrzeit", "history.repsShort": "Wdh.",
+    "import.title": "Backup importieren", "import.defaultMessage": "Die lokalen Daten werden durch das Backup ersetzt.", "import.now": "Jetzt importieren",
+    "confirm.title": "Aktion bestätigen", "confirm.defaultMessage": "Soll diese Aktion wirklich ausgeführt werden?",
+    "changelog.title": "GYMMI – Versionsverlauf", "changelog.loading": "CHANGELOG WIRD GELADEN…", "changelog.empty": "Noch keine Versionseinträge vorhanden.", "changelog.retry": "Bitte prüfe deine Verbindung und versuche es erneut.", "changelog.unknownDate": "Datum unbekannt", "changelog.update": "Update",
+    "workout.none": "KEIN WORKOUT AKTIV", "workout.noneHint": "Starte ein leeres Training oder verwende eine deiner Vorlagen.", "workout.startEmpty": "Leeres Workout starten", "workout.savedRoutines": "GESPEICHERTE ROUTINEN", "workout.templates": "Workout-Vorlagen", "workout.noTemplate": "Noch keine Vorlage. Starte ein Workout und speichere die Übungsauswahl als Vorlage.", "workout.current": "AKTUELLES WORKOUT", "workout.running": "Training läuft", "workout.asTemplate": "Als Vorlage", "workout.discard": "Verwerfen", "workout.time": "ZEIT", "workout.done": "ERLEDIGT", "workout.setsUpper": "SÄTZE", "workout.noExercise": "Noch keine Übung im Workout.", "workout.addExercise": "+ Übung", "workout.finish": "Workout fertig", "workout.start": "Start", "workout.exercises": "Übungen", "workout.reps": "Wdh.", "workout.weight": "Gewicht", "workout.lastTime": "LETZTES MAL", "workout.noPrevious": "Noch keine Werte gespeichert", "workout.removeSet": "− Satz", "workout.addSet": "+ Satz", "workout.removeExercise": "Übung entfernen", "workout.set": "Satz", "workout.markOpen": "als offen markieren", "workout.complete": "abschließen",
+    "library.title": "ÜBUNGSBIBLIOTHEK", "library.new": "+ Neu", "library.chooseGroup": "Muskelgruppe wählen", "library.empty": "Keine Übung in dieser Gruppe.", "library.custom": "EIGEN", "library.repsOnly": "NUR WDHL.", "library.quickAdd": "+ Workout",
+    "history.log": "TRAININGSLOG", "history.clearAll": "Alle löschen", "history.noEntries": "NOCH KEINE EINTRÄGE", "history.emptyHint": "Abgeschlossene Workouts erscheinen hier.", "history.noCompleted": "Keine abgeschlossenen Sätze", "history.noExercises": "Keine Übungen gespeichert.", "history.edit": "Bearbeiten",
+    "settings.controlPanel": "SYSTEMSTEUERUNG", "settings.title": "Einstellungen", "settings.general": "Allgemein", "settings.language": "Sprache", "settings.unit": "Gewichtseinheit", "settings.german": "Deutsch", "settings.english": "English", "settings.kg": "Kilogramm (KG)", "settings.lbs": "Pfund (LBS)", "settings.unitHint": "Gespeicherte Gewichte werden bei einem Wechsel automatisch umgerechnet angezeigt.",
+    "settings.tagline": "Minimaler Workout-Tracker<br />für maximale Gains.", "settings.softwareUpdate": "Software-Update", "settings.updateHint": "Prüft nur auf deinen ausdrücklichen Wunsch, ob auf GitHub Pages eine neuere Version liegt.", "settings.checkUpdates": "Auf Updates prüfen", "settings.versionHistory": "Versionsverlauf", "settings.changelogHint": "Zeigt Veröffentlichungsdatum und Änderungen aller bisherigen GYMMI-Versionen.", "settings.openChangelog": "Changelog öffnen", "settings.dataManagement": "Datenverwaltung", "settings.localData": "LOKALE GYMMI-DATEN", "settings.storageNote": "Gemessen werden deine gespeicherten Trainingsdaten. Die installierten App-Dateien zählen nicht dazu.", "settings.backupHint": "Sichert oder ersetzt Einstellungen, Übungen, Vorlagen, laufendes Workout und Trainingsverlauf.", "settings.export": "JSON-Backup exportieren", "settings.import": "JSON-Backup importieren", "settings.privacy": "DATENSCHUTZ", "settings.privacyLocal": "Workouts bleiben auf diesem Gerät.", "settings.privacyNoTracking": "Keine Anmeldung und kein Tracking.", "settings.privacyUpdate": "Die Updateprüfung lädt nur die Versionsnummer.",
+    "toast.workoutStarted": "Workout gestartet", "toast.templateStarted": "„{name}“ gestartet", "toast.templateSaved": "Vorlage gespeichert", "toast.templateExists": "Eine Vorlage mit diesem Namen existiert schon", "toast.templateDeleted": "Vorlage gelöscht", "toast.added": "{name} hinzugefügt", "toast.workoutDiscarded": "Workout verworfen", "toast.workoutSaved": "Workout gespeichert", "toast.workoutChanged": "Workout geändert", "toast.workoutDeleted": "Workout gelöscht", "toast.historyDeleted": "Verlauf gelöscht", "toast.exerciseDeleted": "Übung gelöscht", "toast.dateRequired": "Bitte Datum und Uhrzeit angeben", "toast.backupShared": "Backup zum Teilen bereit", "toast.backupDownloaded": "JSON-Backup heruntergeladen", "toast.exportFailed": "Export fehlgeschlagen", "toast.tooLarge": "Backup ist größer als 5 MB", "toast.invalidJson": "Ungültige JSON-Datei", "toast.backupImported": "Backup importiert", "toast.updateInstalled": "Update installiert – Neustart…",
+    "dialog.deleteTemplateTitle": "Vorlage löschen", "dialog.deleteTemplateMessage": "Soll die Vorlage „{name}“ wirklich gelöscht werden?", "dialog.discardTitle": "Workout verwerfen", "dialog.discardMessage": "Soll das aktuelle Workout wirklich verworfen werden? Alle noch nicht gespeicherten Sätze gehen verloren.", "dialog.deleteWorkoutTitle": "Workout löschen", "dialog.deleteWorkoutMessage": "Soll das Workout vom {date} wirklich aus dem Verlauf gelöscht werden?", "dialog.clearHistoryTitle": "Verlauf löschen", "dialog.clearHistoryMessage": "Sollen wirklich alle {count} Workouts aus dem Verlauf gelöscht werden? Übungen und Vorlagen bleiben erhalten.", "dialog.deleteExerciseTitle": "Übung löschen", "dialog.deleteExerciseMessage": "Soll die Übung „{name}“ wirklich aus der Bibliothek gelöscht werden? Bereits gespeicherte Workouts bleiben erhalten.",
+    "backup.invalid": "Diese Datei ist kein aktuelles GYMMI-Backup.", "backup.invalidData": "Das Backup enthält keine gültigen GYMMI-Daten.", "backup.noExercises": "Im Backup wurden keine gültigen Übungen gefunden.", "backup.active": "1 laufendes Workout", "backup.replace": "Deine aktuellen lokalen Daten werden ersetzt.",
+    "update.searching": "Suche nach Updates…", "update.current": "Version {version} ist aktuell.", "update.serverVersion": "Installiert: {installed} · Server: {remote}", "update.found": "Neue Version {version} gefunden.", "update.ask": "Version {version} ist verfügbar. Möchtest du das Update jetzt herunterladen und installieren?", "update.failed": "Prüfung fehlgeschlagen: {message}", "update.offline": "Keine Internetverbindung. Bitte später erneut versuchen.", "update.loaded": "Version {version} wurde geladen. Neustart…", "update.installFailed": "Installation fehlgeschlagen: {message}",
+  },
+  en: {
+    "nav.main": "Main navigation", "nav.workout": "Workout", "nav.exercises": "Exercises", "nav.history": "History", "nav.settings": "Settings",
+    "status.local": "SAVED LOCALLY", "status.saved": "SAVED ✓",
+    "group.all": "All", "group.Brust": "Chest", "group.Rücken": "Back", "group.Beine": "Legs", "group.Schultern": "Shoulders", "group.Arme": "Arms", "group.Core": "Core",
+    "exercise.benchPress": "Bench Press", "exercise.inclineBenchPress": "Incline Bench Press", "exercise.chestPress": "Chest Press", "exercise.pullUps": "Pull-ups", "exercise.latPulldown": "Lat Pulldown", "exercise.row": "Rows", "exercise.squats": "Squats", "exercise.legPress": "Leg Press", "exercise.legCurl": "Leg Curl", "exercise.shoulderPress": "Shoulder Press", "exercise.lateralRaises": "Lateral Raises", "exercise.reverseFlys": "Reverse Flys", "exercise.bicepsCurls": "Biceps Curls", "exercise.hammerCurls": "Hammer Curls", "exercise.tricepsPushdown": "Triceps Pushdown", "exercise.plank": "Plank", "exercise.crunches": "Crunches", "exercise.legRaises": "Leg Raises",
+    "common.cancel": "Cancel", "common.save": "Save", "common.delete": "Delete", "common.confirm": "Confirm", "common.closeWindow": "Close window", "common.error": "ERROR", "common.unknown": "unknown",
+    "picker.title": "Add exercise", "picker.search": "Search:", "picker.filter": "Filter by muscle group", "picker.create": "+ Create custom exercise", "picker.add": "+ Add", "picker.empty": "No exercise found.",
+    "newExercise.title": "New exercise", "newExercise.name": "Name", "newExercise.placeholder": "e.g. Push-ups", "newExercise.group": "Muscle group", "newExercise.tracking": "Inputs per set", "newExercise.weighted": "Repetitions and weight", "newExercise.repsOnly": "Repetitions only", "newExercise.exists": "This exercise already exists", "newExercise.saved": "Exercise saved",
+    "finish.title": "Finish workout", "finish.message": "Save and finish this workout?", "finish.yes": "Yes, save",
+    "update.title": "Update found", "update.available": "A new version is available.", "update.later": "Later", "update.download": "Download", "update.downloading": "Downloading…",
+    "template.dialogTitle": "Save workout template", "template.name": "Template name", "template.placeholder": "e.g. Push Day", "template.hint": "Exercises and set counts will be copied. Weights and repetitions start empty in a new workout.", "template.save": "Save template",
+    "history.editTitle": "Edit workout", "history.saveChanges": "Save changes", "history.dateTime": "Date and time", "history.repsShort": "Reps",
+    "import.title": "Import backup", "import.defaultMessage": "Your local data will be replaced by this backup.", "import.now": "Import now",
+    "confirm.title": "Confirm action", "confirm.defaultMessage": "Do you really want to perform this action?",
+    "changelog.title": "GYMMI – Version history", "changelog.loading": "LOADING CHANGELOG…", "changelog.empty": "No version entries yet.", "changelog.retry": "Check your connection and try again.", "changelog.unknownDate": "Unknown date", "changelog.update": "Update",
+    "workout.none": "NO ACTIVE WORKOUT", "workout.noneHint": "Start an empty workout or use one of your templates.", "workout.startEmpty": "Start empty workout", "workout.savedRoutines": "SAVED ROUTINES", "workout.templates": "Workout templates", "workout.noTemplate": "No templates yet. Start a workout and save its exercise selection as a template.", "workout.current": "CURRENT WORKOUT", "workout.running": "Workout in progress", "workout.asTemplate": "Save template", "workout.discard": "Discard", "workout.time": "TIME", "workout.done": "COMPLETED", "workout.setsUpper": "SETS", "workout.noExercise": "No exercises in this workout yet.", "workout.addExercise": "+ Exercise", "workout.finish": "Finish workout", "workout.start": "Start", "workout.exercises": "Exercises", "workout.reps": "Reps", "workout.weight": "Weight", "workout.lastTime": "LAST TIME", "workout.noPrevious": "No previous values saved", "workout.removeSet": "− Set", "workout.addSet": "+ Set", "workout.removeExercise": "Remove exercise", "workout.set": "Set", "workout.markOpen": "mark as open", "workout.complete": "complete",
+    "library.title": "EXERCISE LIBRARY", "library.new": "+ New", "library.chooseGroup": "Choose muscle group", "library.empty": "No exercise in this group.", "library.custom": "CUSTOM", "library.repsOnly": "REPS ONLY", "library.quickAdd": "+ Workout",
+    "history.log": "WORKOUT LOG", "history.clearAll": "Delete all", "history.noEntries": "NO ENTRIES YET", "history.emptyHint": "Completed workouts will appear here.", "history.noCompleted": "No completed sets", "history.noExercises": "No exercises saved.", "history.edit": "Edit",
+    "settings.controlPanel": "CONTROL PANEL", "settings.title": "Settings", "settings.general": "General", "settings.language": "Language", "settings.unit": "Weight unit", "settings.german": "Deutsch", "settings.english": "English", "settings.kg": "Kilograms (KG)", "settings.lbs": "Pounds (LBS)", "settings.unitHint": "Saved weights are automatically converted for display when you switch units.",
+    "settings.tagline": "Minimal workout tracker<br />for maximum gains.", "settings.softwareUpdate": "Software update", "settings.updateHint": "Only checks GitHub Pages for a newer version when you explicitly ask it to.", "settings.checkUpdates": "Check for updates", "settings.versionHistory": "Version history", "settings.changelogHint": "Shows release dates and changes for all GYMMI versions.", "settings.openChangelog": "Open changelog", "settings.dataManagement": "Data management", "settings.localData": "LOCAL GYMMI DATA", "settings.storageNote": "This measures your saved workout data. Installed app files are not included.", "settings.backupHint": "Backs up or replaces settings, exercises, templates, the active workout and workout history.", "settings.export": "Export JSON backup", "settings.import": "Import JSON backup", "settings.privacy": "PRIVACY", "settings.privacyLocal": "Workouts stay on this device.", "settings.privacyNoTracking": "No account and no tracking.", "settings.privacyUpdate": "The update check only downloads the version number.",
+    "toast.workoutStarted": "Workout started", "toast.templateStarted": "“{name}” started", "toast.templateSaved": "Template saved", "toast.templateExists": "A template with this name already exists", "toast.templateDeleted": "Template deleted", "toast.added": "{name} added", "toast.workoutDiscarded": "Workout discarded", "toast.workoutSaved": "Workout saved", "toast.workoutChanged": "Workout updated", "toast.workoutDeleted": "Workout deleted", "toast.historyDeleted": "History deleted", "toast.exerciseDeleted": "Exercise deleted", "toast.dateRequired": "Please enter a date and time", "toast.backupShared": "Backup ready to share", "toast.backupDownloaded": "JSON backup downloaded", "toast.exportFailed": "Export failed", "toast.tooLarge": "Backup is larger than 5 MB", "toast.invalidJson": "Invalid JSON file", "toast.backupImported": "Backup imported", "toast.updateInstalled": "Update installed – restarting…",
+    "dialog.deleteTemplateTitle": "Delete template", "dialog.deleteTemplateMessage": "Do you really want to delete the template “{name}”?", "dialog.discardTitle": "Discard workout", "dialog.discardMessage": "Do you really want to discard this workout? All unsaved sets will be lost.", "dialog.deleteWorkoutTitle": "Delete workout", "dialog.deleteWorkoutMessage": "Do you really want to delete the workout from {date}?", "dialog.clearHistoryTitle": "Delete history", "dialog.clearHistoryMessage": "Do you really want to delete all {count} workouts from history? Exercises and templates will remain.", "dialog.deleteExerciseTitle": "Delete exercise", "dialog.deleteExerciseMessage": "Do you really want to delete “{name}” from the library? Saved workouts will remain.",
+    "backup.invalid": "This file is not a current GYMMI backup.", "backup.invalidData": "The backup does not contain valid GYMMI data.", "backup.noExercises": "No valid exercises were found in the backup.", "backup.active": "1 active workout", "backup.replace": "Your current local data will be replaced.",
+    "update.searching": "Checking for updates…", "update.current": "Version {version} is up to date.", "update.serverVersion": "Installed: {installed} · Server: {remote}", "update.found": "New version {version} found.", "update.ask": "Version {version} is available. Do you want to download and install it now?", "update.failed": "Update check failed: {message}", "update.offline": "No internet connection. Please try again later.", "update.loaded": "Version {version} downloaded. Restarting…", "update.installFailed": "Installation failed: {message}",
+  },
+};
+
+function language() {
+  return SUPPORTED_LANGUAGES.includes(state?.settings?.language) ? state.settings.language : "de";
+}
+
+function t(key, variables = {}) {
+  const template = TRANSLATIONS[language()]?.[key] ?? TRANSLATIONS.de[key] ?? key;
+  return String(template).replace(/\{(\w+)\}/g, (_, name) => variables[name] ?? "");
+}
+
+function groupLabel(group) {
+  return t(group === "Alle" ? "group.all" : `group.${group}`);
+}
 
 const STARTER_EXERCISES = [
   ["Bankdrücken", "Brust"],
@@ -22,19 +92,34 @@ const STARTER_EXERCISES = [
   ["Plank", "Core"],
   ["Crunches", "Core"],
   ["Beinheben", "Core"],
-].map(([name, group], index) => ({
+];
+const STARTER_NAME_KEYS = [
+  "benchPress", "inclineBenchPress", "chestPress", "pullUps", "latPulldown", "row",
+  "squats", "legPress", "legCurl", "shoulderPress", "lateralRaises", "reverseFlys",
+  "bicepsCurls", "hammerCurls", "tricepsPushdown", "plank", "crunches", "legRaises",
+];
+const STARTER_EXERCISE_DATA = STARTER_EXERCISES.map(([name, group], index) => ({
   id: `starter-${index + 1}`,
   name,
   group,
   custom: false,
+  trackingMode: "weighted",
 }));
 
+function exerciseDisplayName(exercise) {
+  const id = exercise.libraryId || exercise.id;
+  const starterIndex = /^starter-(\d+)$/.exec(id)?.[1];
+  const key = starterIndex ? STARTER_NAME_KEYS[Number(starterIndex) - 1] : null;
+  return key ? t(`exercise.${key}`) : exercise.name;
+}
+
 const initialState = {
-  exercises: STARTER_EXERCISES,
+  exercises: STARTER_EXERCISE_DATA,
   activeWorkout: null,
   history: [],
   templates: [],
   selectedGroup: "Alle",
+  settings: { language: "de", unit: "kg" },
 };
 
 let state = loadState();
@@ -91,6 +176,7 @@ function normalizeWorkoutExercise(raw = {}) {
     libraryId: cleanText(raw.libraryId, 120),
     name,
     group,
+    trackingMode: TRACKING_MODES.includes(raw.trackingMode) ? raw.trackingMode : "weighted",
     sets: sets.length ? sets : [makeSet()],
   };
 }
@@ -122,6 +208,7 @@ function normalizeTemplate(raw = {}) {
       libraryId: cleanText(exercise.libraryId, 120),
       name: exerciseName,
       group: GROUPS.includes(exercise.group) ? exercise.group : "Core",
+      trackingMode: TRACKING_MODES.includes(exercise.trackingMode) ? exercise.trackingMode : "weighted",
       setCount: Math.min(99, Math.max(1, Number.parseInt(exercise.setCount, 10) || 1)),
     };
   }).filter(Boolean);
@@ -135,7 +222,7 @@ function normalizeTemplate(raw = {}) {
 
 function normalizeState(raw, strict = false) {
   if (!raw || !Array.isArray(raw.exercises) || !Array.isArray(raw.history)) {
-    if (strict) throw new Error("Das Backup enthält keine gültigen GYMMI-Daten.");
+    if (strict) throw new Error(t("backup.invalidData"));
     return structuredClone(initialState);
   }
 
@@ -147,18 +234,23 @@ function normalizeState(raw, strict = false) {
       name,
       group: GROUPS.includes(exercise.group) ? exercise.group : "Core",
       custom: Boolean(exercise.custom),
+      trackingMode: TRACKING_MODES.includes(exercise.trackingMode) ? exercise.trackingMode : "weighted",
     };
   }).filter(Boolean);
-  if (strict && !exercises.length) throw new Error("Im Backup wurden keine gültigen Übungen gefunden.");
+  if (strict && !exercises.length) throw new Error(t("backup.noExercises"));
 
   return {
-    exercises: exercises.length ? exercises : structuredClone(STARTER_EXERCISES),
+    exercises: exercises.length ? exercises : structuredClone(STARTER_EXERCISE_DATA),
     activeWorkout: raw.activeWorkout ? normalizeWorkout(raw.activeWorkout, false) : null,
     history: raw.history.slice(0, 5000).map((workout) => normalizeWorkout(workout, true)).filter(Boolean),
     templates: Array.isArray(raw.templates)
       ? raw.templates.slice(0, 500).map(normalizeTemplate).filter(Boolean)
       : [],
     selectedGroup: GROUPS.includes(raw.selectedGroup) ? raw.selectedGroup : "Alle",
+    settings: {
+      language: SUPPORTED_LANGUAGES.includes(raw.settings?.language) ? raw.settings.language : "de",
+      unit: SUPPORTED_UNITS.includes(raw.settings?.unit) ? raw.settings.unit : "kg",
+    },
   };
 }
 
@@ -174,9 +266,9 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   const status = document.querySelector("#storage-status");
   if (!status) return;
-  status.textContent = "GESPEICHERT ✓";
+  status.textContent = t("status.saved");
   window.setTimeout(() => {
-    status.textContent = "LOKAL GESPEICHERT";
+    status.textContent = t("status.local");
   }, 900);
 }
 
@@ -187,6 +279,52 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function currentUnit() {
+  return SUPPORTED_UNITS.includes(state.settings?.unit) ? state.settings.unit : "kg";
+}
+
+function displayWeight(weightInKg) {
+  if (weightInKg === "" || weightInKg === null || weightInKg === undefined) return "";
+  const numeric = Number(String(weightInKg).replace(",", "."));
+  if (!Number.isFinite(numeric)) return "";
+  const converted = currentUnit() === "lbs" ? numeric * KG_TO_LBS : numeric;
+  return String(Math.round(converted * 100) / 100);
+}
+
+function storeWeight(displayedWeight) {
+  if (displayedWeight === "") return "";
+  const numeric = Number(String(displayedWeight).replace(",", "."));
+  if (!Number.isFinite(numeric)) return "";
+  const kilograms = currentUnit() === "lbs" ? numeric / KG_TO_LBS : numeric;
+  return String(Math.round(kilograms * 10000) / 10000);
+}
+
+function weightUnitLabel() {
+  return currentUnit().toUpperCase();
+}
+
+function formatSetValue(exercise, set) {
+  if (exercise.trackingMode === "reps") return `${set.reps || "–"}×`;
+  const weight = displayWeight(set.weight);
+  return `${set.reps || "–"}× ${weight || "–"} ${currentUnit()}`;
+}
+
+function applyStaticTranslations() {
+  document.documentElement.lang = language();
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach((element) => {
+    element.innerHTML = t(element.dataset.i18nHtml);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    element.placeholder = t(element.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAriaLabel));
+  });
 }
 
 function formatDuration(start, end = Date.now()) {
@@ -200,7 +338,7 @@ function formatDuration(start, end = Date.now()) {
 }
 
 function formatDate(timestamp) {
-  return new Intl.DateTimeFormat("de-DE", {
+  return new Intl.DateTimeFormat(language() === "en" ? "en-GB" : "de-DE", {
     day: "2-digit",
     month: "2-digit",
     year: "2-digit",
@@ -215,6 +353,7 @@ function completedSets(workout) {
 }
 
 function render() {
+  applyStaticTranslations();
   document.querySelectorAll(".tab").forEach((tab) => {
     const selected = tab.dataset.view === currentView;
     tab.classList.toggle("is-active", selected);
@@ -235,23 +374,23 @@ function renderWorkout() {
       <section>
         <div class="empty-state">
           <div class="empty-state__icon" aria-hidden="true"><span class="empty-state__bar"></span></div>
-          <h1>KEIN WORKOUT AKTIV</h1>
-          <p>Starte ein leeres Training oder verwende eine deiner Vorlagen.</p>
+          <h1>${t("workout.none")}</h1>
+          <p>${t("workout.noneHint")}</p>
           <button class="win-button win-button--primary" type="button" data-action="start-workout">
-            Leeres Workout starten
+            ${t("workout.startEmpty")}
           </button>
         </div>
         <div class="template-section">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">GESPEICHERTE ROUTINEN</p>
-              <h2>Workout-Vorlagen</h2>
+              <p class="eyebrow">${t("workout.savedRoutines")}</p>
+              <h2>${t("workout.templates")}</h2>
             </div>
             <span class="counter-badge">${templates.length}</span>
           </div>
           <div class="template-list">
             ${templates.length ? templates.map(templateItem).join("") : `
-              <p class="empty-list">Noch keine Vorlage. Starte ein Workout und speichere die Übungsauswahl als Vorlage.</p>
+              <p class="empty-list">${t("workout.noTemplate")}</p>
             `}
           </div>
         </div>
@@ -265,40 +404,40 @@ function renderWorkout() {
     <section>
       <div class="view-header">
         <div>
-          <p class="eyebrow">AKTUELLES WORKOUT</p>
-          <h1 class="view-title">Training läuft</h1>
+          <p class="eyebrow">${t("workout.current")}</p>
+          <h1 class="view-title">${t("workout.running")}</h1>
         </div>
         <div class="header-actions">
-          ${workout.exercises.length ? '<button class="win-button" type="button" data-action="open-template-dialog">Als Vorlage</button>' : ""}
-          <button class="win-button win-button--danger" type="button" data-action="discard-workout">Verwerfen</button>
+          ${workout.exercises.length ? `<button class="win-button" type="button" data-action="open-template-dialog">${t("workout.asTemplate")}</button>` : ""}
+          <button class="win-button win-button--danger" type="button" data-action="discard-workout">${t("workout.discard")}</button>
         </div>
       </div>
       <div class="workout-meta">
-        <div class="metric"><span>ZEIT</span><strong id="workout-timer">${formatDuration(workout.startedAt)}</strong></div>
-        <div class="metric"><span>ERLEDIGT</span><strong>${completedSets(workout)} SÄTZE</strong></div>
+        <div class="metric"><span>${t("workout.time")}</span><strong id="workout-timer">${formatDuration(workout.startedAt)}</strong></div>
+        <div class="metric"><span>${t("workout.done")}</span><strong>${completedSets(workout)} ${t("workout.setsUpper")}</strong></div>
       </div>
       <div id="workout-exercises">
-        ${cards || '<div class="panel empty-list">Noch keine Übung im Workout.</div>'}
+        ${cards || `<div class="panel empty-list">${t("workout.noExercise")}</div>`}
       </div>
       <div class="workout-actions">
-        <button class="win-button" type="button" data-action="open-picker">+ Übung</button>
-        <button class="win-button win-button--primary" type="button" data-action="finish-workout">Workout fertig</button>
+        <button class="win-button" type="button" data-action="open-picker">${t("workout.addExercise")}</button>
+        <button class="win-button win-button--primary" type="button" data-action="finish-workout">${t("workout.finish")}</button>
       </div>
     </section>
   `;
 }
 
 function templateItem(template) {
-  const names = template.exercises.map((exercise) => exercise.name).join(" · ");
+  const names = template.exercises.map(exerciseDisplayName).join(" · ");
   return `
     <div class="template-item">
       <div class="template-item__text">
         <strong>${escapeHtml(template.name)}</strong>
-        <span class="muted">${template.exercises.length} Übungen${names ? ` · ${escapeHtml(names)}` : ""}</span>
+        <span class="muted">${template.exercises.length} ${t("workout.exercises")}${names ? ` · ${escapeHtml(names)}` : ""}</span>
       </div>
       <div class="template-item__actions">
-        <button class="win-button win-button--primary" type="button" data-action="start-template" data-template-id="${escapeHtml(template.id)}">Start</button>
-        <button class="icon-button" type="button" data-action="delete-template" data-template-id="${escapeHtml(template.id)}" aria-label="Vorlage ${escapeHtml(template.name)} löschen">×</button>
+        <button class="win-button win-button--primary" type="button" data-action="start-template" data-template-id="${escapeHtml(template.id)}">${t("workout.start")}</button>
+        <button class="icon-button" type="button" data-action="delete-template" data-template-id="${escapeHtml(template.id)}" aria-label="${escapeHtml(t("dialog.deleteTemplateTitle"))}: ${escapeHtml(template.name)}">×</button>
       </div>
     </div>
   `;
@@ -309,7 +448,7 @@ function findLastExerciseValues(exercise) {
   for (const workout of workouts) {
     const match = workout.exercises.find((item) => (
       (exercise.libraryId && item.libraryId === exercise.libraryId)
-      || item.name.toLocaleLowerCase("de") === exercise.name.toLocaleLowerCase("de")
+      || item.name.toLocaleLowerCase(language()) === exercise.name.toLocaleLowerCase(language())
     ));
     if (!match) continue;
     const sets = match.sets.filter((set) => set.done || set.reps || set.weight);
@@ -321,13 +460,13 @@ function findLastExerciseValues(exercise) {
 function exerciseCard(exercise) {
   const previous = findLastExerciseValues(exercise);
   const previousValues = previous
-    ? previous.sets.map((set) => `${set.reps || "–"}× ${set.weight || "–"} kg`).join(" · ")
-    : "Noch keine Werte gespeichert";
+    ? previous.sets.map((set) => formatSetValue(exercise, set)).join(" · ")
+    : t("workout.noPrevious");
   const rows = exercise.sets.map((set, index) => `
-    <div class="set-row ${set.done ? "is-done" : ""}">
+    <div class="set-row ${exercise.trackingMode === "reps" ? "is-reps-only" : ""} ${set.done ? "is-done" : ""}">
       <span class="set-row__number">${index + 1}</span>
       <div class="set-field">
-        <label for="reps-${set.id}">Wdh.</label>
+        <label for="reps-${set.id}">${t("workout.reps")}</label>
         <input
           class="win-input"
           id="reps-${set.id}"
@@ -339,11 +478,11 @@ function exerciseCard(exercise) {
           data-field="reps"
           data-exercise-id="${exercise.id}"
           data-set-id="${set.id}"
-          aria-label="Wiederholungen in Satz ${index + 1}"
+          aria-label="${t("workout.reps")} · ${t("workout.set")} ${index + 1}"
         />
       </div>
-      <div class="set-field">
-        <label for="weight-${set.id}">KG</label>
+      ${exercise.trackingMode === "weighted" ? `<div class="set-field">
+        <label for="weight-${set.id}">${weightUnitLabel()}</label>
         <input
           class="win-input"
           id="weight-${set.id}"
@@ -352,20 +491,20 @@ function exerciseCard(exercise) {
           max="9999"
           step="0.5"
           type="number"
-          value="${escapeHtml(set.weight)}"
+          value="${escapeHtml(displayWeight(set.weight))}"
           data-field="weight"
           data-exercise-id="${exercise.id}"
           data-set-id="${set.id}"
-          aria-label="Gewicht in Satz ${index + 1}"
+          aria-label="${t("workout.weight")} · ${t("workout.set")} ${index + 1}"
         />
-      </div>
+      </div>` : ""}
       <button
         class="set-check ${set.done ? "is-done" : ""}"
         type="button"
         data-action="toggle-set"
         data-exercise-id="${exercise.id}"
         data-set-id="${set.id}"
-        aria-label="Satz ${index + 1} ${set.done ? "als offen markieren" : "abschließen"}"
+        aria-label="${t("workout.set")} ${index + 1} ${set.done ? t("workout.markOpen") : t("workout.complete")}"
         aria-pressed="${set.done}"
       >✓</button>
     </div>
@@ -375,26 +514,26 @@ function exerciseCard(exercise) {
     <article class="exercise-card">
       <header class="exercise-card__header">
         <div>
-          <h2>${escapeHtml(exercise.name)}</h2>
-          <span class="group-label">${escapeHtml(exercise.group)}</span>
+          <h2>${escapeHtml(exerciseDisplayName(exercise))}</h2>
+          <span class="group-label">${escapeHtml(groupLabel(exercise.group))}</span>
         </div>
         <button
           class="icon-button"
           type="button"
           data-action="remove-exercise"
           data-exercise-id="${exercise.id}"
-          aria-label="${escapeHtml(exercise.name)} aus dem Workout entfernen"
-          title="Übung entfernen"
+          aria-label="${escapeHtml(exerciseDisplayName(exercise))}: ${escapeHtml(t("workout.removeExercise"))}"
+          title="${escapeHtml(t("workout.removeExercise"))}"
         >×</button>
       </header>
       <div class="previous-values">
-        <strong>LETZTES MAL${previous ? ` · ${formatDate(previous.workout.startedAt)}` : ""}</strong>
+        <strong>${t("workout.lastTime")}${previous ? ` · ${formatDate(previous.workout.startedAt)}` : ""}</strong>
         <span>${escapeHtml(previousValues)}</span>
       </div>
       <div class="sets">${rows}</div>
       <div class="card-footer">
-        <button class="win-button" type="button" data-action="remove-set" data-exercise-id="${exercise.id}" ${exercise.sets.length <= 1 ? "disabled" : ""}>− Satz</button>
-        <button class="win-button" type="button" data-action="add-set" data-exercise-id="${exercise.id}">+ Satz</button>
+        <button class="win-button" type="button" data-action="remove-set" data-exercise-id="${exercise.id}" ${exercise.sets.length <= 1 ? "disabled" : ""}>${t("workout.removeSet")}</button>
+        <button class="win-button" type="button" data-action="add-set" data-exercise-id="${exercise.id}">${t("workout.addSet")}</button>
       </div>
     </article>
   `;
@@ -404,22 +543,22 @@ function renderExercises() {
   const selected = state.selectedGroup;
   const exercises = state.exercises
     .filter((exercise) => selected === "Alle" || exercise.group === selected)
-    .sort((a, b) => a.name.localeCompare(b.name, "de"));
+    .sort((a, b) => exerciseDisplayName(a).localeCompare(exerciseDisplayName(b), language()));
 
   app.innerHTML = `
     <section>
       <div class="view-header">
         <div>
-          <p class="eyebrow">ÜBUNGSBIBLIOTHEK</p>
-          <h1 class="view-title">${state.exercises.length} Übungen</h1>
+          <p class="eyebrow">${t("library.title")}</p>
+          <h1 class="view-title">${state.exercises.length} ${t("workout.exercises")}</h1>
         </div>
-        <button class="win-button win-button--primary" type="button" data-action="new-exercise">+ Neu</button>
+        <button class="win-button win-button--primary" type="button" data-action="new-exercise">${t("library.new")}</button>
       </div>
-      <div class="filter-row" aria-label="Muskelgruppe wählen">
+      <div class="filter-row" aria-label="${t("library.chooseGroup")}">
         ${groupButtons(selected, "select-library-group")}
       </div>
       <div class="library-list">
-        ${exercises.length ? exercises.map(libraryItem).join("") : '<p class="empty-list">Keine Übung in dieser Gruppe.</p>'}
+        ${exercises.length ? exercises.map(libraryItem).join("") : `<p class="empty-list">${t("library.empty")}</p>`}
       </div>
     </section>
   `;
@@ -433,7 +572,7 @@ function groupButtons(selected, action) {
       data-action="${action}"
       data-group="${group}"
       aria-pressed="${selected === group}"
-    >${group}</button>
+    >${escapeHtml(groupLabel(group))}</button>
   `).join("");
 }
 
@@ -441,12 +580,12 @@ function libraryItem(exercise) {
   return `
     <div class="library-item">
       <div>
-        <strong>${escapeHtml(exercise.name)}</strong>
-        <span class="muted">${escapeHtml(exercise.group)}${exercise.custom ? " · EIGEN" : ""}</span>
+        <strong>${escapeHtml(exerciseDisplayName(exercise))}</strong>
+        <span class="muted">${escapeHtml(groupLabel(exercise.group))}${exercise.custom ? ` · ${t("library.custom")}` : ""}${exercise.trackingMode === "reps" ? ` · ${t("library.repsOnly")}` : ""}</span>
       </div>
       <div class="library-item__actions">
-        ${state.activeWorkout ? `<button class="win-button" type="button" data-action="quick-add" data-library-id="${exercise.id}">+ Workout</button>` : ""}
-        ${exercise.custom ? `<button class="icon-button" type="button" data-action="delete-library-exercise" data-library-id="${exercise.id}" aria-label="${escapeHtml(exercise.name)} löschen">×</button>` : ""}
+        ${state.activeWorkout ? `<button class="win-button" type="button" data-action="quick-add" data-library-id="${exercise.id}">${t("library.quickAdd")}</button>` : ""}
+        ${exercise.custom ? `<button class="icon-button" type="button" data-action="delete-library-exercise" data-library-id="${exercise.id}" aria-label="${escapeHtml(exerciseDisplayName(exercise))}: ${t("common.delete")}">×</button>` : ""}
       </div>
     </div>
   `;
@@ -458,16 +597,16 @@ function renderHistory() {
     <section>
       <div class="view-header">
         <div>
-          <p class="eyebrow">TRAININGSLOG</p>
+          <p class="eyebrow">${t("history.log")}</p>
           <h1 class="view-title">${workouts.length} ${workouts.length === 1 ? "Workout" : "Workouts"}</h1>
         </div>
-        ${workouts.length ? '<button class="win-button win-button--danger" type="button" data-action="clear-history">Alle löschen</button>' : ""}
+        ${workouts.length ? `<button class="win-button win-button--danger" type="button" data-action="clear-history">${t("history.clearAll")}</button>` : ""}
       </div>
       <div class="history-list">
         ${workouts.length ? workouts.map(historyItem).join("") : `
           <div class="empty-list">
-            <p><strong>NOCH KEINE EINTRÄGE</strong></p>
-            <p>Abgeschlossene Workouts erscheinen hier.</p>
+            <p><strong>${t("history.noEntries")}</strong></p>
+            <p>${t("history.emptyHint")}</p>
           </div>
         `}
       </div>
@@ -479,23 +618,23 @@ function historyItem(workout) {
   const exerciseDetails = workout.exercises.map((exercise) => {
     const sets = exercise.sets.filter((set) => set.done);
     const summary = sets.length
-      ? sets.map((set) => `${set.reps || "–"}× ${set.weight || "–"} kg`).join(" · ")
-      : "Keine abgeschlossenen Sätze";
-    return `<p><strong>${escapeHtml(exercise.name)}:</strong> ${escapeHtml(summary)}</p>`;
+      ? sets.map((set) => formatSetValue(exercise, set)).join(" · ")
+      : t("history.noCompleted");
+    return `<p><strong>${escapeHtml(exerciseDisplayName(exercise))}:</strong> ${escapeHtml(summary)}</p>`;
   }).join("");
 
   return `
     <details class="history-item">
       <summary>
         <strong>${formatDate(workout.startedAt)}</strong>
-        <span class="muted">${workout.exercises.length} Übungen · ${completedSets(workout)} Sätze</span>
+        <span class="muted">${workout.exercises.length} ${t("workout.exercises")} · ${completedSets(workout)} ${t("workout.setsUpper")}</span>
         <span class="history-duration">${formatDuration(workout.startedAt, workout.endedAt)}</span>
       </summary>
       <div class="history-details">
-        ${exerciseDetails || "Keine Übungen gespeichert."}
+        ${exerciseDetails || t("history.noExercises")}
         <div class="history-actions">
-          <button class="win-button" type="button" data-action="edit-history" data-workout-id="${escapeHtml(workout.id)}">Bearbeiten</button>
-          <button class="win-button win-button--danger" type="button" data-action="delete-history" data-workout-id="${escapeHtml(workout.id)}">Löschen</button>
+          <button class="win-button" type="button" data-action="edit-history" data-workout-id="${escapeHtml(workout.id)}">${t("history.edit")}</button>
+          <button class="win-button win-button--danger" type="button" data-action="delete-history" data-workout-id="${escapeHtml(workout.id)}">${t("common.delete")}</button>
         </div>
       </div>
     </details>
@@ -516,7 +655,7 @@ function formatDataSize(bytes) {
     value /= 1024;
     unitIndex += 1;
   }
-  const formatted = new Intl.NumberFormat("de-DE", {
+  const formatted = new Intl.NumberFormat(language() === "en" ? "en-GB" : "de-DE", {
     minimumFractionDigits: value < 10 ? 1 : 0,
     maximumFractionDigits: 1,
   }).format(value);
@@ -529,8 +668,8 @@ function renderInfo() {
     <section>
       <div class="view-header">
         <div>
-          <p class="eyebrow">SYSTEMSTEUERUNG</p>
-          <h1 class="view-title">Info</h1>
+          <p class="eyebrow">${t("settings.controlPanel")}</p>
+          <h1 class="view-title">${t("settings.title")}</h1>
         </div>
       </div>
       <div class="info-grid">
@@ -538,47 +677,67 @@ function renderInfo() {
           <div class="about-logo" aria-hidden="true">G</div>
           <h2>GYMMI.EXE</h2>
           <span class="version-number">VERSION ${escapeHtml(appVersion)}</span>
-          <p class="muted">Minimaler Workout-Tracker<br />für maximale Gains.</p>
+          <p class="muted">${t("settings.tagline")}</p>
+        </div>
+        <div class="panel settings-panel">
+          <h2>${t("settings.general")}</h2>
+          <div class="settings-fields">
+            <label>
+              <span class="field-label">${t("settings.language")}</span>
+              <select class="win-input" data-setting="language">
+                <option value="de" ${language() === "de" ? "selected" : ""}>${t("settings.german")}</option>
+                <option value="en" ${language() === "en" ? "selected" : ""}>${t("settings.english")}</option>
+              </select>
+            </label>
+            <label>
+              <span class="field-label">${t("settings.unit")}</span>
+              <select class="win-input" data-setting="unit">
+                <option value="kg" ${currentUnit() === "kg" ? "selected" : ""}>${t("settings.kg")}</option>
+                <option value="lbs" ${currentUnit() === "lbs" ? "selected" : ""}>${t("settings.lbs")}</option>
+              </select>
+            </label>
+          </div>
+          <p class="muted settings-hint">${t("settings.unitHint")}</p>
         </div>
         <div class="panel update-panel">
-          <h2>Software-Update</h2>
-          <p class="muted">Prüft nur auf deinen ausdrücklichen Wunsch, ob auf GitHub Pages eine neuere Version liegt.</p>
+          <h2>${t("settings.softwareUpdate")}</h2>
+          <p class="muted">${t("settings.updateHint")}</p>
           <button class="win-button win-button--wide win-button--primary" type="button" data-action="check-update">
-            Auf Updates prüfen
+            ${t("settings.checkUpdates")}
           </button>
           <div class="update-status" id="update-status" role="status" aria-live="polite">${escapeHtml(updateStatus)}</div>
         </div>
         <div class="panel changelog-panel">
-          <h2>Versionsverlauf</h2>
-          <p class="muted">Zeigt Veröffentlichungsdatum und Änderungen aller bisherigen GYMMI-Versionen.</p>
+          <h2>${t("settings.versionHistory")}</h2>
+          <p class="muted">${t("settings.changelogHint")}</p>
           <button class="win-button win-button--wide" type="button" data-action="open-changelog">
-            Changelog öffnen
+            ${t("settings.openChangelog")}
           </button>
         </div>
         <div class="panel data-panel">
-          <h2>Datenverwaltung</h2>
+          <h2>${t("settings.dataManagement")}</h2>
           <div class="storage-readout" title="${storageBytes} Byte">
-            <span>LOKALE GYMMI-DATEN</span>
+            <span>${t("settings.localData")}</span>
             <strong data-storage-size>${formatDataSize(storageBytes)}</strong>
-            <small>${state.exercises.length} Übungen · ${state.templates.length} Vorlagen · ${state.history.length} Workouts</small>
+            <small>${state.exercises.length} ${t("workout.exercises")} · ${state.templates.length} ${t("workout.templates")} · ${state.history.length} Workouts</small>
           </div>
-          <p class="storage-note">Gemessen werden deine gespeicherten Trainingsdaten. Die installierten App-Dateien zählen nicht dazu.</p>
-          <p class="muted">Sichert oder ersetzt Übungen, Vorlagen, laufendes Workout und Trainingsverlauf.</p>
+          <p class="storage-note">${t("settings.storageNote")}</p>
+          <p class="muted">${t("settings.backupHint")}</p>
           <div class="data-actions">
             <button class="win-button win-button--wide" type="button" data-action="export-json">
-              JSON-Backup exportieren
+              ${t("settings.export")}
             </button>
             <button class="win-button win-button--wide" type="button" data-action="import-json">
-              JSON-Backup importieren
+              ${t("settings.import")}
             </button>
           </div>
         </div>
         <div class="panel">
-          <strong>DATENSCHUTZ</strong>
+          <strong>${t("settings.privacy")}</strong>
           <ul class="privacy-list">
-            <li>Workouts bleiben auf diesem Gerät.</li>
-            <li>Keine Anmeldung und kein Tracking.</li>
-            <li>Die Updateprüfung lädt nur die Versionsnummer.</li>
+            <li>${t("settings.privacyLocal")}</li>
+            <li>${t("settings.privacyNoTracking")}</li>
+            <li>${t("settings.privacyUpdate")}</li>
           </ul>
         </div>
       </div>
@@ -588,14 +747,21 @@ function renderInfo() {
 
 function formatChangelogDate(value) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value));
-  if (!match) return cleanText(value, 20) || "Datum unbekannt";
-  return `${match[3]}.${match[2]}.${match[1]}`;
+  if (!match) return cleanText(value, 20) || t("changelog.unknownDate");
+  return language() === "en"
+    ? `${match[3]}/${match[2]}/${match[1]}`
+    : `${match[3]}.${match[2]}.${match[1]}`;
+}
+
+function localizedChangelogValue(value, fallback = "") {
+  if (value && typeof value === "object") return value[language()] || value.de || value.en || fallback;
+  return value || fallback;
 }
 
 function renderChangelogEntries(entries) {
   return entries.map((entry) => {
-    const version = cleanText(entry.version, 20) || "unbekannt";
-    const title = cleanText(entry.title, 80) || "Update";
+    const version = cleanText(entry.version, 20) || t("common.unknown");
+    const title = cleanText(localizedChangelogValue(entry.title), 80) || t("changelog.update");
     const changes = Array.isArray(entry.changes) ? entry.changes.slice(0, 30) : [];
     return `
       <article class="changelog-entry ${version === appVersion ? "is-current" : ""}">
@@ -605,7 +771,7 @@ function renderChangelogEntries(entries) {
         </header>
         <h3>${escapeHtml(title)}</h3>
         <ul>
-          ${changes.map((change) => `<li>${escapeHtml(cleanText(change, 240))}</li>`).join("")}
+          ${changes.map((change) => `<li>${escapeHtml(cleanText(localizedChangelogValue(change), 240))}</li>`).join("")}
         </ul>
       </article>
     `;
@@ -614,26 +780,26 @@ function renderChangelogEntries(entries) {
 
 async function openChangelog() {
   const content = document.querySelector("#changelog-content");
-  content.innerHTML = '<div class="changelog-loading">CHANGELOG WIRD GELADEN…</div>';
+  content.innerHTML = `<div class="changelog-loading">${t("changelog.loading")}</div>`;
   changelogDialog.showModal();
 
   try {
     if (!changelogEntries) {
       const response = await fetch("changelog.json");
-      if (!response.ok) throw new Error("Changelog nicht erreichbar");
+      if (!response.ok) throw new Error(language() === "en" ? "Changelog unavailable" : "Changelog nicht erreichbar");
       const data = await response.json();
-      if (!Array.isArray(data.entries)) throw new Error("Changelog ist ungültig");
+      if (!Array.isArray(data.entries)) throw new Error(language() === "en" ? "Invalid changelog" : "Changelog ist ungültig");
       changelogEntries = data.entries;
     }
     content.innerHTML = changelogEntries.length
       ? renderChangelogEntries(changelogEntries)
-      : '<p class="empty-list">Noch keine Versionseinträge vorhanden.</p>';
+      : `<p class="empty-list">${t("changelog.empty")}</p>`;
   } catch (error) {
     content.innerHTML = `
       <div class="changelog-error">
-        <strong>FEHLER</strong>
+        <strong>${t("common.error")}</strong>
         <p>${escapeHtml(error.message)}</p>
-        <p>Bitte prüfe deine Verbindung und versuche es erneut.</p>
+        <p>${t("changelog.retry")}</p>
       </div>
     `;
   }
@@ -648,7 +814,7 @@ async function exportJsonBackup() {
   const filename = `gymmi-backup-${date}.json`;
   const backup = {
     format: "gymmi-backup",
-    schemaVersion: 1,
+    schemaVersion: 2,
     appVersion,
     exportedAt: new Date().toISOString(),
     data: state,
@@ -664,9 +830,9 @@ async function exportJsonBackup() {
       await navigator.share({
         files: [file],
         title: "GYMMI Backup",
-        text: "Backup meiner GYMMI-Trainingsdaten",
+        text: language() === "en" ? "Backup of my GYMMI workout data" : "Backup meiner GYMMI-Trainingsdaten",
       });
-      showToast("Backup zum Teilen bereit");
+      showToast(t("toast.backupShared"));
       return;
     }
 
@@ -678,32 +844,32 @@ async function exportJsonBackup() {
     link.click();
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    showToast("JSON-Backup heruntergeladen");
+    showToast(t("toast.backupDownloaded"));
   } catch (error) {
-    if (error.name !== "AbortError") showToast("Export fehlgeschlagen");
+    if (error.name !== "AbortError") showToast(t("toast.exportFailed"));
   }
 }
 
 async function readJsonBackup(file) {
   if (!file) return;
   if (file.size > 5 * 1024 * 1024) {
-    showToast("Backup ist größer als 5 MB");
+    showToast(t("toast.tooLarge"));
     return;
   }
 
   try {
     const backup = JSON.parse(await file.text());
-    if (backup.format !== "gymmi-backup" || !backup.data) {
-      throw new Error("Diese Datei ist kein GYMMI-Backup.");
+    if (backup.format !== "gymmi-backup" || backup.schemaVersion !== 2 || !backup.data) {
+      throw new Error(t("backup.invalid"));
     }
     pendingImportState = normalizeState(backup.data, true);
-    const activeText = pendingImportState.activeWorkout ? " · 1 laufendes Workout" : "";
+    const activeText = pendingImportState.activeWorkout ? ` · ${t("backup.active")}` : "";
     document.querySelector("#import-message").textContent =
-      `${pendingImportState.exercises.length} Übungen · ${pendingImportState.templates.length} Vorlagen · ${pendingImportState.history.length} Workouts${activeText}. Deine aktuellen lokalen Daten werden ersetzt.`;
+      `${pendingImportState.exercises.length} ${t("workout.exercises")} · ${pendingImportState.templates.length} ${t("workout.templates")} · ${pendingImportState.history.length} Workouts${activeText}. ${t("backup.replace")}`;
     importDialog.showModal();
   } catch (error) {
     pendingImportState = null;
-    showToast(error instanceof SyntaxError ? "Ungültige JSON-Datei" : error.message);
+    showToast(error instanceof SyntaxError ? t("toast.invalidJson") : error.message);
   } finally {
     importInput.value = "";
   }
@@ -717,7 +883,7 @@ function confirmJsonImport() {
   importDialog.close();
   currentView = "info";
   render();
-  showToast("Backup importiert");
+  showToast(t("toast.backupImported"));
 }
 
 async function loadInstalledVersion() {
@@ -725,9 +891,9 @@ async function loadInstalledVersion() {
     const response = await fetch("version.json");
     if (!response.ok) throw new Error("Versionsdatei fehlt");
     const data = await response.json();
-    appVersion = String(data.version || "unbekannt");
+    appVersion = String(data.version || t("common.unknown"));
   } catch {
-    appVersion = "unbekannt";
+    appVersion = t("common.unknown");
   }
 }
 
@@ -743,57 +909,57 @@ function compareVersions(first, second) {
 }
 
 async function checkForUpdates() {
-  updateStatus = "Suche nach Updates…";
+  updateStatus = t("update.searching");
   refreshInfoView();
   const button = app.querySelector('[data-action="check-update"]');
   button.disabled = true;
 
   try {
     const response = await fetch(`version.json?check=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error("Versionsserver nicht erreichbar");
+    if (!response.ok) throw new Error(language() === "en" ? "Version server unavailable" : "Versionsserver nicht erreichbar");
     const data = await response.json();
     const remoteVersion = String(data.version || "");
-    if (!/^\d+\.\d+\.\d+$/.test(remoteVersion)) throw new Error("Ungültige Versionsnummer");
+    if (!/^\d+\.\d+\.\d+$/.test(remoteVersion)) throw new Error(language() === "en" ? "Invalid version number" : "Ungültige Versionsnummer");
 
     const comparison = compareVersions(remoteVersion, appVersion);
     if (comparison === 0) {
-      updateStatus = `Version ${appVersion} ist aktuell.`;
+      updateStatus = t("update.current", { version: appVersion });
       refreshInfoView();
       return;
     }
     if (comparison < 0) {
-      updateStatus = `Installiert: ${appVersion} · Server: ${remoteVersion}`;
+      updateStatus = t("update.serverVersion", { installed: appVersion, remote: remoteVersion });
       refreshInfoView();
       return;
     }
 
     pendingVersion = remoteVersion;
-    updateStatus = `Neue Version ${remoteVersion} gefunden.`;
+    updateStatus = t("update.found", { version: remoteVersion });
     refreshInfoView();
     document.querySelector("#update-message").textContent =
-      `Version ${remoteVersion} ist verfügbar. Möchtest du das Update jetzt herunterladen und installieren?`;
+      t("update.ask", { version: remoteVersion });
     document.querySelector("#update-dialog").showModal();
   } catch (error) {
     updateStatus = navigator.onLine
-      ? `Prüfung fehlgeschlagen: ${error.message}`
-      : "Keine Internetverbindung. Bitte später erneut versuchen.";
+      ? t("update.failed", { message: error.message })
+      : t("update.offline");
     refreshInfoView();
   }
 }
 
 async function refreshAppShell() {
-  if (!("serviceWorker" in navigator)) throw new Error("Offline-Updates werden nicht unterstützt");
+  if (!("serviceWorker" in navigator)) throw new Error(language() === "en" ? "Offline updates are not supported" : "Offline-Updates werden nicht unterstützt");
   const registration = await navigator.serviceWorker.ready;
   const worker = navigator.serviceWorker.controller || registration.active;
-  if (!worker) throw new Error("Offline-Dienst ist noch nicht bereit");
+  if (!worker) throw new Error(language() === "en" ? "Offline service is not ready" : "Offline-Dienst ist noch nicht bereit");
 
   return new Promise((resolve, reject) => {
     const channel = new MessageChannel();
-    const timeout = window.setTimeout(() => reject(new Error("Update-Zeitüberschreitung")), 20000);
+    const timeout = window.setTimeout(() => reject(new Error(language() === "en" ? "Update timed out" : "Update-Zeitüberschreitung")), 20000);
     channel.port1.onmessage = (event) => {
       window.clearTimeout(timeout);
       if (event.data?.ok) resolve();
-      else reject(new Error(event.data?.error || "Update fehlgeschlagen"));
+      else reject(new Error(event.data?.error || (language() === "en" ? "Update failed" : "Update fehlgeschlagen")));
     };
     worker.postMessage({ type: "REFRESH_APP_SHELL" }, [channel.port2]);
   });
@@ -804,22 +970,22 @@ async function installPendingUpdate() {
   const targetVersion = pendingVersion;
   const confirmButton = document.querySelector("#confirm-update");
   confirmButton.disabled = true;
-  confirmButton.textContent = "Wird geladen…";
+  confirmButton.textContent = t("update.downloading");
 
   try {
     await refreshAppShell();
-    updateStatus = `Version ${targetVersion} wurde geladen. Neustart…`;
+    updateStatus = t("update.loaded", { version: targetVersion });
     document.querySelector("#update-dialog").close();
-    showToast("Update installiert – Neustart…");
+    showToast(t("toast.updateInstalled"));
     window.setTimeout(() => location.reload(), 450);
   } catch (error) {
     document.querySelector("#update-dialog").close();
-    updateStatus = `Installation fehlgeschlagen: ${error.message}`;
+    updateStatus = t("update.installFailed", { message: error.message });
     pendingVersion = null;
     refreshInfoView();
   } finally {
     confirmButton.disabled = false;
-    confirmButton.textContent = "Herunterladen";
+    confirmButton.textContent = t("update.download");
   }
 }
 
@@ -831,7 +997,7 @@ function startWorkout() {
   };
   saveState();
   render();
-  showToast("Workout gestartet");
+  showToast(t("toast.workoutStarted"));
 }
 
 function startWorkoutFromTemplate(templateId) {
@@ -845,12 +1011,13 @@ function startWorkoutFromTemplate(templateId) {
       libraryId: exercise.libraryId,
       name: exercise.name,
       group: exercise.group,
+      trackingMode: exercise.trackingMode,
       sets: Array.from({ length: exercise.setCount }, makeSet),
     })),
   };
   saveState();
   render();
-  showToast(`„${template.name}“ gestartet`);
+  showToast(t("toast.templateStarted", { name: template.name }));
 }
 
 function openTemplateDialog() {
@@ -865,10 +1032,10 @@ function saveWorkoutTemplate(event) {
   const name = cleanText(new FormData(event.currentTarget).get("name"), 42);
   if (!name || !state.activeWorkout?.exercises.length) return;
   const duplicate = state.templates.some(
-    (template) => template.name.toLocaleLowerCase("de") === name.toLocaleLowerCase("de"),
+    (template) => template.name.toLocaleLowerCase(language()) === name.toLocaleLowerCase(language()),
   );
   if (duplicate) {
-    showToast("Eine Vorlage mit diesem Namen existiert schon");
+    showToast(t("toast.templateExists"));
     return;
   }
   state.templates.push({
@@ -879,29 +1046,30 @@ function saveWorkoutTemplate(event) {
       libraryId: exercise.libraryId,
       name: exercise.name,
       group: exercise.group,
+      trackingMode: exercise.trackingMode,
       setCount: exercise.sets.length,
     })),
   });
   saveState();
   templateDialog.close();
   render();
-  showToast("Vorlage gespeichert");
+  showToast(t("toast.templateSaved"));
 }
 
 async function deleteTemplate(templateId) {
   const template = state.templates.find((item) => item.id === templateId);
   if (!template) return;
   const confirmed = await askForConfirmation({
-    title: "Vorlage löschen",
-    message: `Soll die Vorlage „${template.name}“ wirklich gelöscht werden?`,
-    confirmLabel: "Löschen",
+    title: t("dialog.deleteTemplateTitle"),
+    message: t("dialog.deleteTemplateMessage", { name: template.name }),
+    confirmLabel: t("common.delete"),
     danger: true,
   });
   if (!confirmed) return;
   state.templates = state.templates.filter((item) => item.id !== templateId);
   saveState();
   render();
-  showToast("Vorlage gelöscht");
+  showToast(t("toast.templateDeleted"));
 }
 
 function makeSet() {
@@ -920,12 +1088,13 @@ function addExerciseToWorkout(libraryId) {
     libraryId: source.id,
     name: source.name,
     group: source.group,
+    trackingMode: source.trackingMode,
     sets: [makeSet()],
   });
   saveState();
   render();
   picker.close();
-  showToast(`${source.name} hinzugefügt`);
+  showToast(t("toast.added", { name: exerciseDisplayName(source) }));
 }
 
 function openPicker() {
@@ -951,28 +1120,28 @@ function updatePickerKeyboardSpace() {
 }
 
 function renderPicker() {
-  const term = searchInput.value.trim().toLocaleLowerCase("de");
+  const term = searchInput.value.trim().toLocaleLowerCase(language());
   const matches = state.exercises
     .filter((exercise) => pickerGroup === "Alle" || exercise.group === pickerGroup)
-    .filter((exercise) => exercise.name.toLocaleLowerCase("de").includes(term))
-    .sort((a, b) => a.name.localeCompare(b.name, "de"));
+    .filter((exercise) => exerciseDisplayName(exercise).toLocaleLowerCase(language()).includes(term))
+    .sort((a, b) => exerciseDisplayName(a).localeCompare(exerciseDisplayName(b), language()));
 
   document.querySelector("#picker-groups").innerHTML = groupButtons(pickerGroup, "select-picker-group");
   document.querySelector("#picker-list").innerHTML = matches.length
     ? matches.map((exercise) => `
       <div class="picker-item">
-        <div><strong>${escapeHtml(exercise.name)}</strong><br /><span class="muted">${escapeHtml(exercise.group)}</span></div>
-        <button class="win-button" type="button" data-picker-add="${exercise.id}">+ Add</button>
+        <div><strong>${escapeHtml(exerciseDisplayName(exercise))}</strong><br /><span class="muted">${escapeHtml(groupLabel(exercise.group))}${exercise.trackingMode === "reps" ? ` · ${t("library.repsOnly")}` : ""}</span></div>
+        <button class="win-button" type="button" data-picker-add="${exercise.id}">${t("picker.add")}</button>
       </div>
     `).join("")
-    : '<p class="empty-list">Keine Übung gefunden.</p>';
+    : `<p class="empty-list">${t("picker.empty")}</p>`;
 }
 
 function openNewExercise(fromPicker = false) {
   addNewExerciseToWorkout = fromPicker;
   if (picker.open) picker.close();
   const select = document.querySelector("#new-exercise-group");
-  select.innerHTML = GROUPS.map((group) => `<option value="${group}">${group}</option>`).join("");
+  select.innerHTML = GROUPS.map((group) => `<option value="${group}">${escapeHtml(groupLabel(group))}</option>`).join("");
   document.querySelector("#new-exercise-form").reset();
   newExerciseDialog.showModal();
   window.setTimeout(() => document.querySelector("#new-exercise-name").focus(), 0);
@@ -983,17 +1152,18 @@ function submitNewExercise(event) {
   const formData = new FormData(event.currentTarget);
   const name = String(formData.get("name") || "").trim();
   const group = String(formData.get("group") || "");
-  if (!name || !GROUPS.includes(group)) return;
+  const trackingMode = String(formData.get("trackingMode") || "weighted");
+  if (!name || !GROUPS.includes(group) || !TRACKING_MODES.includes(trackingMode)) return;
 
   const duplicate = state.exercises.some(
-    (exercise) => exercise.name.toLocaleLowerCase("de") === name.toLocaleLowerCase("de"),
+    (exercise) => exerciseDisplayName(exercise).toLocaleLowerCase(language()) === name.toLocaleLowerCase(language()),
   );
   if (duplicate) {
-    showToast("Diese Übung gibt es bereits");
+    showToast(t("newExercise.exists"));
     return;
   }
 
-  const exercise = { id: makeId("custom"), name, group, custom: true };
+  const exercise = { id: makeId("custom"), name, group, custom: true, trackingMode };
   state.exercises.push(exercise);
   saveState();
   newExerciseDialog.close();
@@ -1004,7 +1174,7 @@ function submitNewExercise(event) {
     state.selectedGroup = group;
     saveState();
     render();
-    showToast("Übung gespeichert");
+    showToast(t("newExercise.saved"));
   }
 }
 
@@ -1022,16 +1192,16 @@ async function handleWorkoutAction(button) {
   if (action === "finish-workout") finishDialog.showModal();
   if (action === "discard-workout") {
     const confirmed = await askForConfirmation({
-      title: "Workout verwerfen",
-      message: "Soll das aktuelle Workout wirklich verworfen werden? Alle noch nicht gespeicherten Sätze gehen verloren.",
-      confirmLabel: "Verwerfen",
+      title: t("dialog.discardTitle"),
+      message: t("dialog.discardMessage"),
+      confirmLabel: t("workout.discard"),
       danger: true,
     });
     if (!confirmed) return;
     state.activeWorkout = null;
     saveState();
     render();
-    showToast("Workout verworfen");
+    showToast(t("toast.workoutDiscarded"));
   }
   if (action === "add-set" && exercise) {
     exercise.sets.push(makeSet());
@@ -1066,7 +1236,7 @@ function finishWorkout() {
   finishDialog.close();
   currentView = "history";
   render();
-  showToast("Workout gespeichert");
+  showToast(t("toast.workoutSaved"));
 }
 
 function toDateTimeLocal(timestamp) {
@@ -1081,12 +1251,12 @@ function openHistoryEditor(workoutId) {
   editingHistoryId = workoutId;
   const exercises = workout.exercises.map((exercise) => `
     <fieldset class="edit-exercise">
-      <legend>${escapeHtml(exercise.name)}</legend>
+      <legend>${escapeHtml(exerciseDisplayName(exercise))}</legend>
       ${exercise.sets.map((set, index) => `
-        <div class="edit-set-row">
+        <div class="edit-set-row ${exercise.trackingMode === "reps" ? "is-reps-only" : ""}">
           <span>${index + 1}.</span>
-          <label>Wdh.<input class="win-input" type="number" inputmode="numeric" min="0" max="999" value="${escapeHtml(set.reps)}" data-edit-field="reps" data-exercise-id="${escapeHtml(exercise.id)}" data-set-id="${escapeHtml(set.id)}" /></label>
-          <label>KG<input class="win-input" type="number" inputmode="decimal" min="0" max="9999" step="0.5" value="${escapeHtml(set.weight)}" data-edit-field="weight" data-exercise-id="${escapeHtml(exercise.id)}" data-set-id="${escapeHtml(set.id)}" /></label>
+          <label>${t("history.repsShort")}<input class="win-input" type="number" inputmode="numeric" min="0" max="999" value="${escapeHtml(set.reps)}" data-edit-field="reps" data-exercise-id="${escapeHtml(exercise.id)}" data-set-id="${escapeHtml(set.id)}" /></label>
+          ${exercise.trackingMode === "weighted" ? `<label>${weightUnitLabel()}<input class="win-input" type="number" inputmode="decimal" min="0" max="9999" step="0.5" value="${escapeHtml(displayWeight(set.weight))}" data-edit-field="weight" data-exercise-id="${escapeHtml(exercise.id)}" data-set-id="${escapeHtml(set.id)}" /></label>` : ""}
           <label class="edit-done"><input type="checkbox" data-edit-field="done" data-exercise-id="${escapeHtml(exercise.id)}" data-set-id="${escapeHtml(set.id)}" ${set.done ? "checked" : ""} />✓</label>
         </div>
       `).join("")}
@@ -1094,10 +1264,10 @@ function openHistoryEditor(workoutId) {
   `).join("");
   document.querySelector("#history-edit-content").innerHTML = `
     <div>
-      <label class="field-label" for="history-edit-date">Datum und Uhrzeit</label>
+      <label class="field-label" for="history-edit-date">${t("history.dateTime")}</label>
       <input class="win-input" id="history-edit-date" type="datetime-local" required value="${toDateTimeLocal(workout.startedAt)}" />
     </div>
-    <div class="edit-workout-list">${exercises || '<p class="empty-list">Keine Übungen gespeichert.</p>'}</div>
+    <div class="edit-workout-list">${exercises || `<p class="empty-list">${t("history.noExercises")}</p>`}</div>
   `;
   historyEditDialog.showModal();
 }
@@ -1108,7 +1278,7 @@ function saveHistoryEdit(event) {
   if (!workout) return;
   const newStartedAt = new Date(document.querySelector("#history-edit-date").value).getTime();
   if (!Number.isFinite(newStartedAt)) {
-    showToast("Bitte Datum und Uhrzeit angeben");
+    showToast(t("toast.dateRequired"));
     return;
   }
   const duration = Math.max(0, Number(workout.endedAt || workout.startedAt) - workout.startedAt);
@@ -1118,51 +1288,53 @@ function saveHistoryEdit(event) {
     const exercise = workout.exercises.find((item) => item.id === input.dataset.exerciseId);
     const set = exercise?.sets.find((item) => item.id === input.dataset.setId);
     if (!set) return;
-    set[input.dataset.editField] = input.dataset.editField === "done" ? input.checked : input.value;
+    set[input.dataset.editField] = input.dataset.editField === "done"
+      ? input.checked
+      : input.dataset.editField === "weight" ? storeWeight(input.value) : input.value;
   });
   saveState();
   editingHistoryId = null;
   historyEditDialog.close();
   render();
-  showToast("Workout geändert");
+  showToast(t("toast.workoutChanged"));
 }
 
 async function deleteHistoryWorkout(workoutId) {
   const workout = state.history.find((item) => item.id === workoutId);
   if (!workout) return;
   const confirmed = await askForConfirmation({
-    title: "Workout löschen",
-    message: `Soll das Workout vom ${formatDate(workout.startedAt)} wirklich aus dem Verlauf gelöscht werden?`,
-    confirmLabel: "Löschen",
+    title: t("dialog.deleteWorkoutTitle"),
+    message: t("dialog.deleteWorkoutMessage", { date: formatDate(workout.startedAt) }),
+    confirmLabel: t("common.delete"),
     danger: true,
   });
   if (!confirmed) return;
   state.history = state.history.filter((item) => item.id !== workoutId);
   saveState();
   render();
-  showToast("Workout gelöscht");
+  showToast(t("toast.workoutDeleted"));
 }
 
 async function clearHistory() {
   if (!state.history.length) return;
   const confirmed = await askForConfirmation({
-    title: "Verlauf löschen",
-    message: `Sollen wirklich alle ${state.history.length} Workouts aus dem Verlauf gelöscht werden? Übungen und Vorlagen bleiben erhalten.`,
-    confirmLabel: "Alle löschen",
+    title: t("dialog.clearHistoryTitle"),
+    message: t("dialog.clearHistoryMessage", { count: state.history.length }),
+    confirmLabel: t("history.clearAll"),
     danger: true,
   });
   if (!confirmed) return;
   state.history = [];
   saveState();
   render();
-  showToast("Verlauf gelöscht");
+  showToast(t("toast.historyDeleted"));
 }
 
 function updateSet(input) {
   const exercise = findWorkoutExercise(input.dataset.exerciseId);
   const set = exercise?.sets.find((item) => item.id === input.dataset.setId);
   if (!set || !["reps", "weight"].includes(input.dataset.field)) return;
-  set[input.dataset.field] = input.value;
+  set[input.dataset.field] = input.dataset.field === "weight" ? storeWeight(input.value) : input.value;
   saveState();
 }
 
@@ -1170,16 +1342,16 @@ async function deleteLibraryExercise(id) {
   const exercise = state.exercises.find((item) => item.id === id);
   if (!exercise?.custom) return;
   const confirmed = await askForConfirmation({
-    title: "Übung löschen",
-    message: `Soll die Übung „${exercise.name}“ wirklich aus der Bibliothek gelöscht werden? Bereits gespeicherte Workouts bleiben erhalten.`,
-    confirmLabel: "Löschen",
+    title: t("dialog.deleteExerciseTitle"),
+    message: t("dialog.deleteExerciseMessage", { name: exerciseDisplayName(exercise) }),
+    confirmLabel: t("common.delete"),
     danger: true,
   });
   if (!confirmed) return;
   state.exercises = state.exercises.filter((item) => item.id !== id);
   saveState();
   render();
-  showToast("Übung gelöscht");
+  showToast(t("toast.exerciseDeleted"));
 }
 
 function showToast(message) {
@@ -1191,9 +1363,9 @@ function showToast(message) {
 }
 
 function askForConfirmation({
-  title = "Aktion bestätigen",
+  title = t("confirm.title"),
   message,
-  confirmLabel = "Bestätigen",
+  confirmLabel = t("common.confirm"),
   danger = false,
 }) {
   return new Promise((resolve) => {
@@ -1258,6 +1430,17 @@ app.addEventListener("click", (event) => {
 
 app.addEventListener("change", (event) => {
   if (event.target.matches("[data-field]")) updateSet(event.target);
+  if (event.target.matches("[data-setting]")) {
+    const setting = event.target.dataset.setting;
+    const value = event.target.value;
+    if (setting === "language" && SUPPORTED_LANGUAGES.includes(value)) {
+      state.settings.language = value;
+      updateStatus = "";
+    }
+    if (setting === "unit" && SUPPORTED_UNITS.includes(value)) state.settings.unit = value;
+    saveState();
+    render();
+  }
 });
 
 document.querySelector("#picker-groups").addEventListener("click", (event) => {
@@ -1297,7 +1480,7 @@ document.addEventListener("click", (event) => {
 });
 
 function updateClock() {
-  document.querySelector("#clock").textContent = new Intl.DateTimeFormat("de-DE", {
+  document.querySelector("#clock").textContent = new Intl.DateTimeFormat(language() === "en" ? "en-GB" : "de-DE", {
     hour: "2-digit",
     minute: "2-digit",
   }).format(new Date());
