@@ -23,7 +23,8 @@ const TRANSLATIONS = {
     "import.title": "Backup importieren", "import.defaultMessage": "Die lokalen Daten werden durch das Backup ersetzt.", "import.now": "Jetzt importieren",
     "confirm.title": "Aktion bestätigen", "confirm.defaultMessage": "Soll diese Aktion wirklich ausgeführt werden?",
     "changelog.title": "GYMMI – Versionsverlauf", "changelog.loading": "CHANGELOG WIRD GELADEN…", "changelog.empty": "Noch keine Versionseinträge vorhanden.", "changelog.retry": "Bitte prüfe deine Verbindung und versuche es erneut.", "changelog.unknownDate": "Datum unbekannt", "changelog.update": "Update",
-    "workout.none": "KEIN WORKOUT AKTIV", "workout.noneHint": "Starte ein leeres Training oder verwende eine deiner Vorlagen.", "workout.startEmpty": "Leeres Workout starten", "workout.savedRoutines": "GESPEICHERTE ROUTINEN", "workout.templates": "Workout-Vorlagen", "workout.noTemplate": "Noch keine Vorlage. Starte ein Workout und speichere die Übungsauswahl als Vorlage.", "workout.current": "AKTUELLES WORKOUT", "workout.running": "Training läuft", "workout.asTemplate": "Als Vorlage", "workout.discard": "Verwerfen", "workout.time": "ZEIT", "workout.done": "ERLEDIGT", "workout.setsUpper": "SÄTZE", "workout.noExercise": "Noch keine Übung im Workout.", "workout.addExercise": "+ Übung", "workout.finish": "Workout fertig", "workout.start": "Start", "workout.exercises": "Übungen", "workout.reps": "Wdh.", "workout.weight": "Gewicht", "workout.lastTime": "LETZTES MAL", "workout.noPrevious": "Noch keine Werte gespeichert", "workout.removeSet": "− Satz", "workout.addSet": "+ Satz", "workout.removeExercise": "Übung entfernen", "workout.set": "Satz", "workout.markOpen": "als offen markieren", "workout.complete": "abschließen",
+    "workout.none": "KEIN WORKOUT AKTIV", "workout.noneHint": "Starte ein leeres Training oder verwende eine deiner Vorlagen.", "workout.startEmpty": "Leeres Workout starten", "workout.savedRoutines": "GESPEICHERTE ROUTINEN", "workout.templates": "Workout-Vorlagen", "workout.noTemplate": "Noch keine Vorlage. Starte ein Workout und speichere die Übungsauswahl als Vorlage.", "workout.current": "AKTUELLES WORKOUT", "workout.running": "Training läuft", "workout.asTemplate": "Als Vorlage", "workout.discard": "Verwerfen", "workout.time": "ZEIT", "workout.done": "ERLEDIGT", "workout.setsUpper": "SÄTZE", "workout.noExercise": "Noch keine Übung im Workout.", "workout.addExercise": "+ Übung", "workout.finish": "Workout fertig", "workout.start": "Start", "workout.exercises": "Übungen", "workout.reps": "Wdh.", "workout.weight": "Gewicht", "workout.history": "Historie", "workout.removeSet": "− Satz", "workout.addSet": "+ Satz", "workout.removeExercise": "Übung entfernen", "workout.set": "Satz", "workout.markOpen": "als offen markieren", "workout.complete": "abschließen",
+    "exerciseHistory.title": "Übungshistorie", "exerciseHistory.empty": "Für diese Übung gibt es noch keine gespeicherten Trainings.", "exerciseHistory.sets": "Sätze",
     "library.title": "ÜBUNGSBIBLIOTHEK", "library.new": "+ Neu", "library.chooseGroup": "Muskelgruppe wählen", "library.empty": "Keine Übung in dieser Gruppe.", "library.custom": "EIGEN", "library.repsOnly": "NUR WDHL.", "library.quickAdd": "+ Workout",
     "history.log": "TRAININGSLOG", "history.clearAll": "Alle löschen", "history.noEntries": "NOCH KEINE EINTRÄGE", "history.emptyHint": "Abgeschlossene Workouts erscheinen hier.", "history.noCompleted": "Keine abgeschlossenen Sätze", "history.noExercises": "Keine Übungen gespeichert.", "history.edit": "Bearbeiten",
     "settings.controlPanel": "SYSTEMSTEUERUNG", "settings.title": "Einstellungen", "settings.general": "Allgemein", "settings.language": "Sprache", "settings.unit": "Gewichtseinheit", "settings.german": "Deutsch", "settings.english": "English", "settings.kg": "Kilogramm (KG)", "settings.lbs": "Pfund (LBS)", "settings.unitHint": "Gespeicherte Gewichte werden bei einem Wechsel automatisch umgerechnet angezeigt.",
@@ -48,7 +49,8 @@ const TRANSLATIONS = {
     "import.title": "Import backup", "import.defaultMessage": "Your local data will be replaced by this backup.", "import.now": "Import now",
     "confirm.title": "Confirm action", "confirm.defaultMessage": "Do you really want to perform this action?",
     "changelog.title": "GYMMI – Version history", "changelog.loading": "LOADING CHANGELOG…", "changelog.empty": "No version entries yet.", "changelog.retry": "Check your connection and try again.", "changelog.unknownDate": "Unknown date", "changelog.update": "Update",
-    "workout.none": "NO ACTIVE WORKOUT", "workout.noneHint": "Start an empty workout or use one of your templates.", "workout.startEmpty": "Start empty workout", "workout.savedRoutines": "SAVED ROUTINES", "workout.templates": "Workout templates", "workout.noTemplate": "No templates yet. Start a workout and save its exercise selection as a template.", "workout.current": "CURRENT WORKOUT", "workout.running": "Workout in progress", "workout.asTemplate": "Save template", "workout.discard": "Discard", "workout.time": "TIME", "workout.done": "COMPLETED", "workout.setsUpper": "SETS", "workout.noExercise": "No exercises in this workout yet.", "workout.addExercise": "+ Exercise", "workout.finish": "Finish workout", "workout.start": "Start", "workout.exercises": "Exercises", "workout.reps": "Reps", "workout.weight": "Weight", "workout.lastTime": "LAST TIME", "workout.noPrevious": "No previous values saved", "workout.removeSet": "− Set", "workout.addSet": "+ Set", "workout.removeExercise": "Remove exercise", "workout.set": "Set", "workout.markOpen": "mark as open", "workout.complete": "complete",
+    "workout.none": "NO ACTIVE WORKOUT", "workout.noneHint": "Start an empty workout or use one of your templates.", "workout.startEmpty": "Start empty workout", "workout.savedRoutines": "SAVED ROUTINES", "workout.templates": "Workout templates", "workout.noTemplate": "No templates yet. Start a workout and save its exercise selection as a template.", "workout.current": "CURRENT WORKOUT", "workout.running": "Workout in progress", "workout.asTemplate": "Save template", "workout.discard": "Discard", "workout.time": "TIME", "workout.done": "COMPLETED", "workout.setsUpper": "SETS", "workout.noExercise": "No exercises in this workout yet.", "workout.addExercise": "+ Exercise", "workout.finish": "Finish workout", "workout.start": "Start", "workout.exercises": "Exercises", "workout.reps": "Reps", "workout.weight": "Weight", "workout.history": "History", "workout.removeSet": "− Set", "workout.addSet": "+ Set", "workout.removeExercise": "Remove exercise", "workout.set": "Set", "workout.markOpen": "mark as open", "workout.complete": "complete",
+    "exerciseHistory.title": "Exercise history", "exerciseHistory.empty": "There are no saved workouts for this exercise yet.", "exerciseHistory.sets": "Sets",
     "library.title": "EXERCISE LIBRARY", "library.new": "+ New", "library.chooseGroup": "Choose muscle group", "library.empty": "No exercise in this group.", "library.custom": "CUSTOM", "library.repsOnly": "REPS ONLY", "library.quickAdd": "+ Workout",
     "history.log": "WORKOUT LOG", "history.clearAll": "Delete all", "history.noEntries": "NO ENTRIES YET", "history.emptyHint": "Completed workouts will appear here.", "history.noCompleted": "No completed sets", "history.noExercises": "No exercises saved.", "history.edit": "Edit",
     "settings.controlPanel": "CONTROL PANEL", "settings.title": "Settings", "settings.general": "General", "settings.language": "Language", "settings.unit": "Weight unit", "settings.german": "Deutsch", "settings.english": "English", "settings.kg": "Kilograms (KG)", "settings.lbs": "Pounds (LBS)", "settings.unitHint": "Saved weights are automatically converted for display when you switch units.",
@@ -144,6 +146,7 @@ const importInput = document.querySelector("#json-import-input");
 const importDialog = document.querySelector("#import-dialog");
 const templateDialog = document.querySelector("#template-dialog");
 const historyEditDialog = document.querySelector("#history-edit-dialog");
+const exerciseHistoryDialog = document.querySelector("#exercise-history-dialog");
 const changelogDialog = document.querySelector("#changelog-dialog");
 const confirmationDialog = document.querySelector("#confirmation-dialog");
 let confirmationResolver = null;
@@ -443,25 +446,34 @@ function templateItem(template) {
   `;
 }
 
-function findLastExerciseValues(exercise) {
+function exerciseMatches(candidate, reference) {
+  const referenceLibraryId = reference.libraryId || reference.id;
+  if (referenceLibraryId && candidate.libraryId === referenceLibraryId) return true;
+  return candidate.name.toLocaleLowerCase(language()) === reference.name.toLocaleLowerCase(language());
+}
+
+function exerciseHistory(exercise) {
   const workouts = [...state.history].sort((a, b) => b.startedAt - a.startedAt);
+  const entries = [];
   for (const workout of workouts) {
-    const match = workout.exercises.find((item) => (
-      (exercise.libraryId && item.libraryId === exercise.libraryId)
-      || item.name.toLocaleLowerCase(language()) === exercise.name.toLocaleLowerCase(language())
-    ));
-    if (!match) continue;
-    const sets = match.sets.filter((set) => set.done || set.reps || set.weight);
-    if (sets.length) return { workout, sets };
+    const match = workout.exercises.find((item) => exerciseMatches(item, exercise));
+    if (match) entries.push({ workout, exercise: match });
   }
-  return null;
+  return entries;
+}
+
+function setsFromLastWorkout(exercise) {
+  const previous = exerciseHistory(exercise)[0]?.exercise;
+  if (!previous?.sets.length) return [makeSet()];
+  return previous.sets.map((set) => ({
+    id: makeId("set"),
+    reps: set.reps,
+    weight: exercise.trackingMode === "weighted" ? set.weight : "",
+    done: false,
+  }));
 }
 
 function exerciseCard(exercise) {
-  const previous = findLastExerciseValues(exercise);
-  const previousValues = previous
-    ? previous.sets.map((set) => formatSetValue(exercise, set)).join(" · ")
-    : t("workout.noPrevious");
   const rows = exercise.sets.map((set, index) => `
     <div class="set-row ${exercise.trackingMode === "reps" ? "is-reps-only" : ""} ${set.done ? "is-done" : ""}">
       <span class="set-row__number">${index + 1}</span>
@@ -526,17 +538,52 @@ function exerciseCard(exercise) {
           title="${escapeHtml(t("workout.removeExercise"))}"
         >×</button>
       </header>
-      <div class="previous-values">
-        <strong>${t("workout.lastTime")}${previous ? ` · ${formatDate(previous.workout.startedAt)}` : ""}</strong>
-        <span>${escapeHtml(previousValues)}</span>
-      </div>
       <div class="sets">${rows}</div>
       <div class="card-footer">
         <button class="win-button" type="button" data-action="remove-set" data-exercise-id="${exercise.id}" ${exercise.sets.length <= 1 ? "disabled" : ""}>${t("workout.removeSet")}</button>
+        <button class="win-button" type="button" data-action="open-exercise-history" data-exercise-id="${exercise.id}">${t("workout.history")}</button>
         <button class="win-button" type="button" data-action="add-set" data-exercise-id="${exercise.id}">${t("workout.addSet")}</button>
       </div>
     </article>
   `;
+}
+
+function formatExerciseHistoryDate(timestamp) {
+  return new Intl.DateTimeFormat(language() === "en" ? "en-GB" : "de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(timestamp);
+}
+
+function openExerciseHistory(exerciseId) {
+  const exercise = findWorkoutExercise(exerciseId);
+  if (!exercise) return;
+  const entries = exerciseHistory(exercise);
+  document.querySelector("#exercise-history-title").textContent =
+    `${exerciseDisplayName(exercise)} – ${t("exerciseHistory.title")}`;
+  document.querySelector("#exercise-history-content").innerHTML = entries.length
+    ? entries.map(({ workout, exercise: historicalExercise }) => `
+      <article class="exercise-history-entry">
+        <header>
+          <time datetime="${new Date(workout.startedAt).toISOString()}">${escapeHtml(formatExerciseHistoryDate(workout.startedAt))}</time>
+          <span>${historicalExercise.sets.length} ${t("exerciseHistory.sets")}</span>
+        </header>
+        <div class="exercise-history-sets">
+          ${historicalExercise.sets.map((set, index) => `
+            <div class="exercise-history-set ${historicalExercise.trackingMode === "reps" ? "is-reps-only" : ""}">
+              <strong>${index + 1}.</strong>
+              <span><small>${t("workout.reps")}</small>${escapeHtml(set.reps || "–")}</span>
+              ${historicalExercise.trackingMode === "weighted" ? `<span><small>${weightUnitLabel()}</small>${escapeHtml(displayWeight(set.weight) || "–")}</span>` : ""}
+            </div>
+          `).join("")}
+        </div>
+      </article>
+    `).join("")
+    : `<p class="empty-list">${t("exerciseHistory.empty")}</p>`;
+  exerciseHistoryDialog.showModal();
 }
 
 function renderExercises() {
@@ -1089,7 +1136,7 @@ function addExerciseToWorkout(libraryId) {
     name: source.name,
     group: source.group,
     trackingMode: source.trackingMode,
-    sets: [makeSet()],
+    sets: setsFromLastWorkout(source),
   });
   saveState();
   render();
@@ -1426,6 +1473,7 @@ app.addEventListener("click", (event) => {
   if (action === "delete-history") deleteHistoryWorkout(button.dataset.workoutId);
   if (action === "clear-history") clearHistory();
   if (action === "open-changelog") openChangelog();
+  if (action === "open-exercise-history") openExerciseHistory(button.dataset.exerciseId);
 });
 
 app.addEventListener("change", (event) => {
