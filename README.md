@@ -20,6 +20,8 @@ Die sichtbare App-Version steht ausschließlich in `version.json`. Für ein neue
 
 Einstellungen, Übungen, Vorlagen, laufende Workouts und Verlauf liegen nur im `localStorage` des Browsers. Unter Einstellungen kann der komplette Stand im aktuellen Backupformat als JSON exportiert und wieder importiert werden. Beim Import wird die Datei zuerst geprüft und erst nach einer Bestätigung anstelle der aktuellen lokalen Daten gespeichert.
 
+Eigene Übungen lassen sich in der Übungsbibliothek nachträglich bearbeiten. GYMMI erinnert außerdem alle sieben Tage lokal an ein neues Backup. Der Erinnerungszeitpunkt wird getrennt von den Trainingsdaten auf dem jeweiligen Gerät gespeichert und nicht in Backups übertragen.
+
 Seit Version 1.2.0 verwendet der Export Backup-Schema 2. Der Import akzeptiert bewusst nur dieses aktuelle, vollständige Format. Ältere, unvollständige oder beschädigte Daten werden weder migriert noch automatisch repariert. Kann der lokale Stand nicht sicher gelesen werden, bewahrt GYMMI die Rohdaten für einen Notfallexport auf und überschreibt sie nicht.
 
 Der sichtbare Versionsverlauf wird in `changelog.json` gepflegt. Neue Einträge stehen oben und enthalten Versionsnummer, Veröffentlichungsdatum sowie deutsche und englische Texte. Die Datei ist Teil des Offline-Caches und kann unter Einstellungen geöffnet werden. Dort zeigt die Datenverwaltung außerdem die Größe der im `localStorage` gespeicherten GYMMI-Daten an.

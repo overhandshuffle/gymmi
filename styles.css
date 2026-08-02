@@ -87,6 +87,7 @@ summary:focus:not(:focus-visible),
 
 .title-bar__title {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 6px;
 }
@@ -105,10 +106,12 @@ summary:focus:not(:focus-visible),
 
 .window-controls {
   display: flex;
+  flex: 0 0 auto;
   gap: 2px;
 }
 
 .window-controls span,
+.window-control,
 .window-close {
   display: grid;
   width: 22px;
@@ -123,8 +126,74 @@ summary:focus:not(:focus-visible),
   line-height: 1;
 }
 
+.window-control:active,
 .window-close:active {
   border-style: inset;
+}
+
+.bsod {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: block;
+  min-width: 300px;
+  padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+  overflow: auto;
+  color: #fff;
+  background: #0000aa;
+  cursor: pointer;
+  font-family: "Courier New", Courier, monospace;
+  font-size: clamp(13px, 3.6vw, 18px);
+  line-height: 1.35;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.bsod[hidden] {
+  display: none;
+}
+
+.bsod:focus {
+  outline: none;
+}
+
+.bsod__content {
+  width: min(100%, 720px);
+  min-width: 0;
+  margin: clamp(48px, 18vh, 180px) auto 0;
+  overflow-wrap: anywhere;
+}
+
+.bsod__title {
+  display: table;
+  margin: 0 auto 2em;
+  padding: 1px 8px;
+  color: #0000aa;
+  background: #c0c0c0;
+  font-weight: 700;
+}
+
+.bsod p {
+  margin: 0 0 1.25em;
+}
+
+.bsod__option {
+  padding-left: 1.4em;
+  text-indent: -1.4em;
+}
+
+.bsod__return {
+  margin-top: 2.4em;
+  text-align: center;
+}
+
+.bsod__cursor {
+  display: block;
+  text-align: center;
+}
+
+body.is-crashed {
+  overflow: hidden;
 }
 
 .tabs {
@@ -187,8 +256,10 @@ summary:focus:not(:focus-visible),
 .app-content {
   position: relative;
   z-index: 1;
+  min-width: 0;
   min-height: 0;
   margin: -2px 5px 5px;
+  overflow-x: hidden;
   overflow-y: auto;
   padding: 10px;
   border: 2px groove var(--white);
@@ -242,6 +313,42 @@ summary:focus:not(:focus-visible),
   padding: 10px;
   border: 2px groove var(--white);
   background: var(--surface-light);
+}
+
+.win-group-box {
+  min-width: 0;
+  margin: 0;
+  padding-top: 8px;
+}
+
+.win-group-box legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 8px);
+  padding: 0 5px;
+  background: var(--surface-light);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pixel-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  image-rendering: pixelated;
+}
+
+.win-button--icon-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pixel-icon-button {
+  display: grid;
+  place-items: center;
 }
 
 .empty-state {
@@ -604,6 +711,8 @@ summary:focus:not(:focus-visible),
 
 .library-item__actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 4px;
   flex: 0 0 auto;
 }
@@ -1035,6 +1144,19 @@ summary:focus:not(:focus-visible),
   font-family: "MS Sans Serif", sans-serif;
 }
 
+.message-icon--pixel {
+  border: 2px outset var(--white);
+  border-radius: 0;
+  color: var(--dark);
+  background: var(--surface);
+}
+
+.message-icon--pixel .pixel-icon {
+  width: 24px;
+  height: 24px;
+  flex-basis: 24px;
+}
+
 .about-panel {
   text-align: center;
 }
@@ -1072,15 +1194,13 @@ summary:focus:not(:focus-visible),
 
 .info-grid {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   gap: 10px;
 }
 
-.update-panel h2,
-.data-panel h2,
-.changelog-panel h2,
-.settings-panel h2 {
-  margin: 0 0 5px;
-  font-size: 15px;
+.info-grid > * {
+  min-width: 0;
 }
 
 .update-panel p,
@@ -1093,7 +1213,7 @@ summary:focus:not(:focus-visible),
 
 .settings-fields {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-bottom: 8px;
 }
@@ -1108,11 +1228,13 @@ summary:focus:not(:focus-visible),
   line-height: 1.35;
 }
 
-@media (max-width: 380px) {
+@media (max-width: 480px) {
   .settings-fields {
     grid-template-columns: 1fr;
   }
+}
 
+@media (max-width: 380px) {
   .tab {
     font-size: 11px;
   }
@@ -1121,6 +1243,53 @@ summary:focus:not(:focus-visible),
 .data-actions {
   display: grid;
   gap: 6px;
+}
+
+.backup-schedule {
+  margin: 9px 0;
+  padding: 7px 8px;
+  border: 2px inset var(--white);
+  background: var(--surface);
+  font-size: 11px;
+}
+
+.backup-schedule.is-due {
+  background: #ffffcc;
+}
+
+.backup-schedule__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.backup-schedule dl {
+  margin: 0;
+}
+
+.backup-schedule dl > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  padding: 3px 0;
+  border-top: 1px dotted var(--shadow);
+}
+
+.backup-schedule dt,
+.backup-schedule dd {
+  margin: 0;
+}
+
+.backup-schedule dd {
+  font-family: "Courier New", monospace;
+  font-weight: 700;
+  text-align: right;
+}
+
+.backup-schedule p {
+  margin: 6px 0 0;
+  font-size: 10px;
 }
 
 .storage-readout {

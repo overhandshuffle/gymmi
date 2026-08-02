@@ -1,4 +1,4 @@
-const CACHE_NAME = "gymmi-shell-v1.4.0";
+const CACHE_NAME = "gymmi-shell-v1.5.1";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -9,6 +9,7 @@ const APP_SHELL = [
   "./changelog.json",
   "./manifest.webmanifest",
   "./icon.svg",
+  "./icons.svg",
 ];
 
 self.addEventListener("install", (event) => {

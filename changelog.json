@@ -2,6 +2,50 @@
   "schemaVersion": 2,
   "entries": [
     {
+      "version": "1.5.1",
+      "date": "2026-08-02",
+      "title": {
+        "de": "Bluescreen-Easter-Egg",
+        "en": "Blue screen Easter egg"
+      },
+      "changes": [
+        {
+          "de": "Das X in der Titelleiste löst jetzt einen authentisch gestalteten Windows-98-Bluescreen aus.",
+          "en": "The title bar's X now triggers an authentically styled Windows 98 blue screen."
+        },
+        {
+          "de": "Ein weiterer Tipp oder eine beliebige Taste bringt GYMMI unverändert zurück; lokale Daten und das laufende Workout bleiben unberührt.",
+          "en": "Another tap or any key restores GYMMI unchanged; local data and the active workout remain untouched."
+        }
+      ]
+    },
+    {
+      "version": "1.5.0",
+      "date": "2026-08-02",
+      "title": {
+        "de": "Bearbeitbare Übungen und Backup-Erinnerung",
+        "en": "Editable exercises and backup reminder"
+      },
+      "changes": [
+        {
+          "de": "Eigene Übungen können nachträglich umbenannt und einer anderen Muskelgruppe oder Trackingart zugeordnet werden.",
+          "en": "Custom exercises can now be renamed and assigned to a different muscle group or tracking mode."
+        },
+        {
+          "de": "Gespeicherte Vorlagen übernehmen Änderungen an eigenen Übungen, während laufende und abgeschlossene Workouts unverändert bleiben.",
+          "en": "Saved templates adopt custom exercise changes, while active and completed workouts remain unchanged."
+        },
+        {
+          "de": "Eine rein lokale Erinnerung weist alle 7 Tage auf ein neues JSON-Backup hin und zeigt den letzten Backup-Termin in den Einstellungen.",
+          "en": "A fully local reminder suggests a new JSON backup every 7 days and shows the last backup date in Settings."
+        },
+        {
+          "de": "Klassische Windows-98-Feldgruppen und kleine lokale Pixel-Symbole verfeinern die Einstellungen und die Übungsbibliothek.",
+          "en": "Classic Windows 98 group boxes and small local pixel icons refine Settings and the exercise library."
+        }
+      ]
+    },
+    {
       "version": "1.4.0",
       "date": "2026-08-02",
       "title": {

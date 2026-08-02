@@ -213,6 +213,26 @@
     };
   }
 
+  function validateBackupReminderMeta(raw) {
+    assertObject(raw, "backupReminder", ["trackingStartedAt", "lastBackupAt", "lastReminderAt"]);
+    const nullableTimestamp = (value, path) => (
+      value === null ? null : assertTimestamp(value, path)
+    );
+    return {
+      trackingStartedAt: assertTimestamp(raw.trackingStartedAt, "backupReminder.trackingStartedAt"),
+      lastBackupAt: nullableTimestamp(raw.lastBackupAt, "backupReminder.lastBackupAt"),
+      lastReminderAt: nullableTimestamp(raw.lastReminderAt, "backupReminder.lastReminderAt"),
+    };
+  }
+
+  function createBackupReminderMeta(now = Date.now()) {
+    return validateBackupReminderMeta({
+      trackingStartedAt: now,
+      lastBackupAt: null,
+      lastReminderAt: null,
+    });
+  }
+
   function createInitialState(starterExercises) {
     const raw = {
       exercises: structuredClone(starterExercises),
@@ -232,8 +252,10 @@
     SUPPORTED_UNITS,
     TRACKING_MODES,
     StateValidationError,
+    createBackupReminderMeta,
     createInitialState,
     validateBackup,
+    validateBackupReminderMeta,
     validateState,
   });
 }(globalThis));

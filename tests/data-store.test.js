@@ -7,8 +7,10 @@ require("../data-store.js");
 
 const {
   StateValidationError,
+  createBackupReminderMeta,
   createInitialState,
   validateBackup,
+  validateBackupReminderMeta,
   validateState,
 } = globalThis.GymmiData;
 
@@ -123,4 +125,19 @@ test("accepts only the exact current backup envelope", () => {
 
   assert.throws(() => validateBackup({ ...backup, schemaVersion: 1 }), StateValidationError);
   assert.throws(() => validateBackup({ ...backup, legacy: true }), StateValidationError);
+});
+
+test("validates the separate backup reminder metadata without changing workout data", () => {
+  const meta = createBackupReminderMeta(1000);
+  assert.deepEqual(meta, {
+    trackingStartedAt: 1000,
+    lastBackupAt: null,
+    lastReminderAt: null,
+  });
+  meta.lastBackupAt = 2000;
+  assert.deepEqual(validateBackupReminderMeta(meta), meta);
+  assert.throws(
+    () => validateBackupReminderMeta({ ...meta, intervalDays: 7 }),
+    StateValidationError,
+  );
 });

@@ -21,8 +21,9 @@
             <span class="app-icon" aria-hidden="true">G</span>
             <span>GYMMI.EXE</span>
           </div>
-          <div class="window-controls" aria-hidden="true">
-            <span>_</span><span>□</span><span>×</span>
+          <div class="window-controls">
+            <span aria-hidden="true">_</span><span aria-hidden="true">□</span>
+            <button class="window-control" id="app-close-button" type="button" aria-label="GYMMI schließen" data-i18n-aria-label="common.closeApp">×</button>
           </div>
         </header>
 
@@ -41,6 +42,17 @@
         </footer>
       </div>
     </div>
+
+    <section class="bsod" id="bsod" role="alertdialog" aria-modal="true" aria-labelledby="bsod-title" tabindex="-1" hidden>
+      <div class="bsod__content">
+        <strong class="bsod__title" id="bsod-title" data-i18n="bsod.title">Windows</strong>
+        <p data-i18n="bsod.error">Der schwere Ausnahmefehler 0E ist an Adresse 0028:C0011E36 in der VXD-Datei VMM(01) + 00010E36 aufgetreten. Die aktuelle Anwendung wird beendet.</p>
+        <p class="bsod__option">* <span data-i18n="bsod.terminate">Drücken Sie eine beliebige Taste, um die aktuelle Anwendung zu beenden.</span></p>
+        <p class="bsod__option">* <span data-i18n="bsod.restart">Drücken Sie STRG+ALT+ENTF erneut, um den Computer neu zu starten. Nicht gespeicherte Daten gehen dabei verloren.</span></p>
+        <p class="bsod__return" data-i18n="bsod.return">Tippe auf den Bildschirm oder drücke eine beliebige Taste, um zu GYMMI zurückzukehren.</p>
+        <span class="bsod__cursor" aria-hidden="true">_</span>
+      </div>
+    </section>
 
     <dialog class="win-dialog" id="exercise-picker" aria-labelledby="picker-title">
       <div class="dialog-window">
@@ -91,6 +103,7 @@
               <option value="reps" data-i18n="newExercise.repsOnly">Nur Wiederholungen</option>
             </select>
           </div>
+          <p class="muted dialog-hint" id="exercise-form-hint" hidden></p>
           <div class="dialog-actions">
             <button class="win-button" type="button" data-close-dialog="new-exercise-dialog" data-i18n="common.cancel">Abbrechen</button>
             <button class="win-button win-button--primary" type="submit" data-i18n="common.save">Speichern</button>
@@ -244,6 +257,30 @@
           <div class="dialog-actions recovery-actions">
             <button class="win-button" id="export-recovery-data" type="button" data-i18n="recovery.export">Rohdaten exportieren</button>
             <button class="win-button win-button--danger" id="reset-recovery-data" type="button" data-i18n="recovery.reset">Daten zurücksetzen</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="win-dialog confirm-dialog" id="backup-reminder-dialog" aria-labelledby="backup-reminder-title">
+      <div class="dialog-window">
+        <header class="title-bar">
+          <strong id="backup-reminder-title" data-i18n="backupReminder.title">Backup-Erinnerung</strong>
+          <button class="window-close" type="button" data-close-dialog="backup-reminder-dialog" aria-label="Fenster schließen" data-i18n-aria-label="common.closeWindow">×</button>
+        </header>
+        <div class="dialog-content">
+          <div class="message-box">
+            <span class="message-icon message-icon--pixel" aria-hidden="true">
+              <svg class="pixel-icon"><use href="icons.svg#floppy"></use></svg>
+            </span>
+            <p data-i18n="backupReminder.message">Dein letztes Backup ist mindestens 7 Tage her. Möchtest du jetzt eine neue lokale JSON-Sicherung erstellen?</p>
+          </div>
+          <div class="dialog-actions">
+            <button class="win-button" type="button" data-close-dialog="backup-reminder-dialog" data-i18n="backupReminder.later">In 7 Tagen erinnern</button>
+            <button class="win-button win-button--primary win-button--icon-text" id="backup-reminder-now" type="button">
+              <svg class="pixel-icon" aria-hidden="true"><use href="icons.svg#floppy"></use></svg>
+              <span data-i18n="backupReminder.now">Jetzt sichern</span>
+            </button>
           </div>
         </div>
       </div>
