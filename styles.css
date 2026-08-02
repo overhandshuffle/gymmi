@@ -37,6 +37,11 @@ select {
   font: inherit;
 }
 
+button,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
 button {
   color: inherit;
 }
@@ -47,6 +52,12 @@ select:focus-visible,
 summary:focus-visible {
   outline: 1px dotted var(--dark);
   outline-offset: -4px;
+}
+
+button:focus:not(:focus-visible),
+summary:focus:not(:focus-visible),
+.win-dialog:focus {
+  outline: none;
 }
 
 .desktop {
@@ -791,19 +802,10 @@ summary:focus-visible {
 #exercise-picker .picker-list {
   min-height: 0;
   max-height: none;
-  padding-bottom: var(--picker-keyboard-space, 0px);
 }
 
-#exercise-picker.has-keyboard .picker-list {
-  padding-bottom: calc(var(--picker-keyboard-space) + 48px);
-}
-
-#exercise-picker.has-keyboard #create-from-picker {
-  position: absolute;
-  right: 12px;
-  bottom: calc(var(--picker-keyboard-space) + 12px);
-  left: 12px;
-  z-index: 1;
+#exercise-picker.has-keyboard .dialog-content {
+  padding-bottom: calc(var(--picker-keyboard-space) + 12px);
 }
 
 .picker-item {

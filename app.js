@@ -135,7 +135,9 @@ let updateStatus = "";
 let pendingImportState = null;
 let editingHistoryId = null;
 let pickerViewportHeight = 0;
+let pickerBottom = 0;
 let changelogEntries = null;
+let lastInteractionWasKeyboard = false;
 
 const app = document.querySelector("#app");
 const picker = document.querySelector("#exercise-picker");
@@ -1151,6 +1153,7 @@ function openPicker() {
   pickerViewportHeight = window.visualViewport?.height || window.innerHeight;
   const pickerHeight = Math.min(620, Math.max(360, pickerViewportHeight - 20));
   const pickerTop = Math.max(10, (pickerViewportHeight - pickerHeight) / 2);
+  pickerBottom = pickerTop + pickerHeight;
   picker.style.setProperty("--picker-height", `${pickerHeight}px`);
   picker.style.setProperty("--picker-top", `${pickerTop}px`);
   picker.style.setProperty("--picker-keyboard-space", "0px");
@@ -1160,10 +1163,13 @@ function openPicker() {
 
 function updatePickerKeyboardSpace() {
   if (!picker.open || !pickerViewportHeight) return;
-  const currentHeight = window.visualViewport?.height || window.innerHeight;
-  const keyboardSpace = Math.max(0, pickerViewportHeight - currentHeight);
+  const viewport = window.visualViewport;
+  const currentHeight = viewport?.height || window.innerHeight;
+  const visibleBottom = (viewport?.offsetTop || 0) + currentHeight;
+  const keyboardIsOpen = pickerViewportHeight - currentHeight > 100;
+  const keyboardSpace = keyboardIsOpen ? Math.max(0, pickerBottom - visibleBottom + 10) : 0;
   picker.style.setProperty("--picker-keyboard-space", `${keyboardSpace}px`);
-  picker.classList.toggle("has-keyboard", keyboardSpace > 100);
+  picker.classList.toggle("has-keyboard", keyboardIsOpen);
 }
 
 function renderPicker() {
@@ -1507,6 +1513,7 @@ searchInput.addEventListener("input", renderPicker);
 window.visualViewport?.addEventListener("resize", updatePickerKeyboardSpace);
 picker.addEventListener("close", () => {
   pickerViewportHeight = 0;
+  pickerBottom = 0;
   picker.classList.remove("has-keyboard");
   picker.style.setProperty("--picker-keyboard-space", "0px");
 });
@@ -1525,6 +1532,27 @@ importInput.addEventListener("change", () => readJsonBackup(importInput.files[0]
 document.addEventListener("click", (event) => {
   const closeButton = event.target.closest("[data-close-dialog]");
   if (closeButton) document.querySelector(`#${closeButton.dataset.closeDialog}`).close();
+});
+
+document.addEventListener("keydown", () => {
+  lastInteractionWasKeyboard = true;
+}, true);
+
+document.addEventListener("pointerdown", () => {
+  lastInteractionWasKeyboard = false;
+}, true);
+
+document.querySelectorAll("dialog").forEach((dialog) => {
+  dialog.addEventListener("close", () => {
+    if (lastInteractionWasKeyboard) return;
+    window.requestAnimationFrame(() => {
+      if (document.querySelector("dialog[open]")) return;
+      const focusedElement = document.activeElement;
+      if (focusedElement instanceof HTMLElement && focusedElement !== document.body) {
+        focusedElement.blur();
+      }
+    });
+  });
 });
 
 function updateClock() {

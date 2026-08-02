@@ -14,7 +14,7 @@ Danach `http://localhost:8080` öffnen. Übungen, laufende Workouts und Verlauf 
 
 ## Neue Version veröffentlichen
 
-Die sichtbare App-Version steht ausschließlich in `version.json`. Für ein neues Release dort beispielsweise `1.3.2` auf `1.4.0` ändern, die gewünschten Dateien anpassen und alles gemeinsam pushen. Installierte Apps laden das Release erst, wenn unter Einstellungen ausdrücklich nach Updates gesucht und der Download bestätigt wird.
+Die sichtbare App-Version steht ausschließlich in `version.json`. Für ein neues Release dort beispielsweise `1.3.3` auf `1.4.0` ändern, die gewünschten Dateien anpassen und alles gemeinsam pushen. Installierte Apps laden das Release erst, wenn unter Einstellungen ausdrücklich nach Updates gesucht und der Download bestätigt wird.
 
 ## Lokale Daten und Backups
 
